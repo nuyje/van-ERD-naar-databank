@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oefeningen | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <h1>Oefeningen</h1>
+  <p class="lead">Nu passen we alles zelf toe. De oefeningen worden stap voor stap moeilijker: eerst krijgen we het ontwerp, daarna enkel het ERD, en op het einde ontwerpen we alles zelf.</p>
+
+  <figure class="goals" aria-label="Wat oefenen we?">
+    <div class="goals-head"><span class="tname">oefeningen</span><span class="hint">wat oefenen we?</span></div>
+    <ul>
+      <li class="key">We implementeren zelfstandig een relationele databank op basis van een ontwerp.</li>
+      <li>We zetten een ERD om naar een model in Workbench.</li>
+      <li>We schrijven insert-scripts met realistische testgegevens.</li>
+    </ul>
+  </figure>
+
+  <h2>Zo pakken we elke oefening aan</h2>
+  <ol class="steps">
+    <li><p><b>Ontwerp.</b> Lees de opdracht, bekijk of teken het ERD en noteer de tabellen in de notatie van de cursus.</p></li>
+    <li><p><b>Model.</b> Nieuw model in Workbench, schema hernoemen, tabellen en relaties tekenen. Bewaar als <code>oefN_naam.mwb</code>.</p></li>
+    <li><p><b>Forward Engineer.</b> Bewaar het script bij de stap <i>Script nakijken</i> met <span class="ui">Save to File…</span> als <code>oefN_naam_create.sql</code>.</p></li>
+    <li><p><b>Gegevens.</b> Voer het testscript uit, of schrijf zelf een insert-script <code>oefN_naam_insert.sql</code>.</p></li>
+    <li><p><b>Testen.</b> Loopt alles zonder fouten? Controleer met <code>SELECT * FROM …</code> en test minstens één keer de referentiële integriteit.</p></li>
+  </ol>
+  <p class="muted">Moeilijkheid: <span class="level" aria-hidden="true"><i class="on"></i><i></i><i></i></span> opwarmer, <span class="level" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span> gemiddeld, <span class="level" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span> uitdaging.</p>
+
+  <!-- ===================================================== OEFENING 1 -->
+  <section class="exercise" id="oef1">
+    <h2>Oefening 1: Boodschappenlijst <span class="level" role="img" aria-label="moeilijkheid 1 van 3"><i class="on"></i><i></i><i></i></span></h2>
+    <ul class="meta-list"><li>Schema: <code>boodschappen</code></li><li>Gegeven: volledig ontwerp en testscript</li><li>Nieuw: zelfstandig werken</li></ul>
+    <p>Herinner je de opdracht uit de les: onze ouders willen een databank voor hun boodschappenlijstje. Ze winkelen in verschillende winkels, waarvan we naam en adres bewaren. Van een boodschap bewaren we een korte omschrijving, de hoeveelheid en de eenheid (stuk, liter, kilogram …), wie ze ingaf en op welke datum, en in welke winkel we ze kopen. Extra: van elke winkel bewaren we de openingsuren.</p>
+    <p>Het ontwerp is gegeven. Bouw het exact na: het testscript gebruikt deze namen.</p>
+  </section>
+</div>
+<div class="bleed">
+  <figure>
+    <div class="diagram" style="max-width:860px"><img src="img/eer-boodschappen.svg" width="840" height="380" alt="Schematische weergave van het EER-diagram van boodschappen: persoon, boodschap, winkel en openingsuur."></div>
+    <figcaption>Het model voor <code>boodschappen</code>. De tabel <code>openingsuur</code> is de extra opdracht.</figcaption>
+  </figure>
+</div>
+<div class="content">
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Tabel</th><th>Kolommen (PS eerst, RS cursief)</th></tr></thead>
+    <tbody>
+      <tr><td><code>persoon</code></td><td><code>persoonID</code> INT AI, <code>voornaam</code> VARCHAR(45)</td></tr>
+      <tr><td><code>winkel</code></td><td><code>winkelID</code> INT AI, <code>naam</code> VARCHAR(45), <code>straatNr</code> VARCHAR(60), <code>postcode</code> CHAR(4), <code>gemeente</code> VARCHAR(45)</td></tr>
+      <tr><td><code>boodschap</code></td><td><code>boodschapID</code> INT AI, <code>omschrijving</code> VARCHAR(100), <code>hoeveelheid</code> DECIMAL(6,2), <code>eenheid</code> VARCHAR(20), <code>datumIngegeven</code> DATE, <i><code>persoonID</code></i>, <i><code>winkelID</code></i></td></tr>
+      <tr><td><code>openingsuur</code> (extra)</td><td><code>openingsuurID</code> INT AI, <code>dag</code> VARCHAR(10), <code>opening</code> TIME, <code>sluiting</code> TIME, <i><code>winkelID</code></i></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Alle kolommen zijn verplicht (NN). Alle relaties zijn 1:n.</p>
+  <h3>Wat doen we?</h3>
+  <ol>
+    <li>Bouw het model <code>oef1_boodschappen.mwb</code> en zet het met Forward Engineer om naar de databank <code>boodschappen</code>.</li>
+    <li>Download het testscript <a href="downloads/oef1_boodschappen_test.sql" download>oef1_boodschappen_test.sql</a> en voer het uit. Verwacht: 4 personen, 4 winkels, 10 boodschappen en 6 openingsuren. Een fout betekent dat je model afwijkt van het ontwerp: de melding vertelt waar.</li>
+    <li>Voeg met een eigen script vijf boodschappen toe die jouw gezin deze week nodig heeft, en de openingsuren van een winkel bij jou in de buurt.</li>
+  </ol>
+  <details>
+    <summary>Denkvraag: waarom staan de openingsuren in een aparte tabel?</summary>
+    <div class="details-body">
+      <p>Een winkel heeft per dag andere openingsuren: dat is een <b>repeterende groep</b> tegenover de primaire sleutel <code>winkelID</code>. Kolommen als <code>maandag</code>, <code>dinsdag</code> … in <code>winkel</code> zouden vaak leeg blijven en zijn lastig te bevragen. Volgens de eerste normaalvorm (cursus 4.4) brengen we de repeterende groep onder in een eigen tabel.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Hint: waarom DECIMAL(6,2) voor hoeveelheid?</summary>
+    <div class="details-body">
+      <p>Hoeveelheden zijn niet altijd gehele getallen: 1.5 kilogram bananen, 0.75 kilogram kippenfilet. <code>DECIMAL(6,2)</code> bewaart tot 9999.99, exact.</p>
+    </div>
+  </details>
+
+  <!-- ===================================================== OEFENING 2 -->
+  <section class="exercise" id="oef2">
+    <h2>Oefening 2: Streamingdienst Kijkbox <span class="level" role="img" aria-label="moeilijkheid 2 van 3"><i class="on"></i><i class="on"></i><i></i></span></h2>
+    <ul class="meta-list"><li>Schema: <code>kijkbox</code></li><li>Gegeven: ERD en testscript</li><li>Nieuw: zelf omzetten en datatypes kiezen</li></ul>
+    <p>Kijkbox is een kleine streamingdienst. Een <b>serie</b> heeft een titel, een beschrijving, een startjaar en een leeftijdsgrens. Een serie bestaat uit één of meer <b>seizoenen</b> (nummer, releasejaar) en elk seizoen bevat één of meer <b>afleveringen</b> (nummer, titel, duur in minuten). Gebruikers maken een <b>profiel</b> aan met een unieke gebruikersnaam en een uniek e-mailadres. Kijkbox houdt bij welk profiel welke aflevering bekeek, wanneer, en hoeveel minuten. Een profiel kan dezelfde aflevering meerdere keren bekijken: elke kijkbeurt wordt bewaard.</p>
+  </section>
+</div>
+<div class="bleed">
+  <figure>
+    <div class="diagram" style="max-width:1010px"><img src="img/erd-kijkbox.svg" width="990" height="210" style="min-width:900px" alt="ERD van Kijkbox: Serie bestaat uit Seizoen, Seizoen bevat Aflevering, Profiel bekijkt Aflevering met de attributen bekekenOp en minutenGekeken."></div>
+    <figcaption>Het ERD van Kijkbox in de notatie van de cursus.</figcaption>
+  </figure>
+</div>
+<div class="content">
+  <h3>Wat doen we?</h3>
+  <ol>
+    <li>Zet het ERD om naar een databaseontwerp in de notatie van de cursus. Noem de tabel voor de relatie <i>bekijkt</i> <code>kijkbeurt</code>, met als PS <code>kijkbeurtID</code>.</li>
+    <li>Kies voor elke kolom een datatype en bepaal NN en UQ.</li>
+    <li>Bouw het model <code>oef2_kijkbox.mwb</code> en zet het om naar de databank <code>kijkbox</code>. Volg strikt de naamgevingsafspraken: tabelnamen in kleine letters, attribuutnamen zoals in het ERD, RS met dezelfde naam als de PS.</li>
+    <li>Voer het testscript <a href="downloads/oef2_kijkbox_test.sql" download>oef2_kijkbox_test.sql</a> uit. Verwacht: 3 series, 4 seizoenen, 14 afleveringen, 4 profielen en 12 kijkbeurten.</li>
+    <li>Voeg je eigen favoriete serie toe (echt of verzonnen) met één seizoen en drie afleveringen, en een profiel voor jezelf dat twee afleveringen bekeek.</li>
+  </ol>
+  <details>
+    <summary>Hint: welke relaties leggen we?</summary>
+    <div class="details-body">
+      <p><i>bestaat uit</i> en <i>bevat</i> zijn 1:n-relaties: <code>seizoen</code> krijgt <code>serieID</code> en <code>aflevering</code> krijgt <code>seizoenID</code>. <i>bekijkt</i> is een m:n-relatie mét attributen: maak zelf de tabel <code>kijkbeurt</code> met <code>kijkbeurtID</code>, <code>bekekenOp</code> en <code>minutenGekeken</code>, en leg twee 1:n-relaties (naar <code>profiel</code> en naar <code>aflevering</code>). Net zoals <code>optreden</code> bij het festival.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Hint: datatypes</summary>
+    <div class="details-body">
+      <ul>
+        <li><code>beschrijving</code> kan lang zijn: kies <code>TEXT</code> of een ruime <code>VARCHAR</code>. Met <code>VARCHAR(45)</code> krijg je fout 1406 in het testscript.</li>
+        <li><code>startjaar</code> en <code>releasejaar</code>: <code>YEAR</code> of <code>INT</code>.</li>
+        <li><code>bekekenOp</code> bevat datum én tijd: <code>DATETIME</code>.</li>
+        <li><code>aangemaaktOp</code>: <code>DATE</code>.</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ===================================================== OEFENING 3 -->
+  <section class="exercise" id="oef3">
+    <h2>Oefening 3: Esports-toernooi <span class="level" role="img" aria-label="moeilijkheid 2 van 3"><i class="on"></i><i class="on"></i><i></i></span></h2>
+    <ul class="meta-list"><li>Schema: <code>esports</code></li><li>Gegeven: enkel de probleemstelling</li><li>Nieuw: zelf het ERD tekenen en een volledig insert-script schrijven</li></ul>
+    <p>De leerlingenraad organiseert een esports-competitie tussen scholen.</p>
+    <ul>
+      <li>Een <b>game</b> heeft een titel, een uitgever en een PEGI-leeftijd.</li>
+      <li>Een <b>team</b> heeft een unieke naam, een unieke tag van hoogstens vijf tekens (zoals KKB) en een oprichtingsdatum.</li>
+      <li>Van een <b>speler</b> bewaren we een unieke gamertag, voornaam, familienaam, geboortedatum en e-mailadres. Een speler zit in hoogstens één team. Sommige spelers zijn <i>free agent</i>: ze hebben (nog) geen team.</li>
+      <li>Een <b>toernooi</b> heeft een naam, een datum, een locatie en een maximaal aantal teams. Elk toernooi wordt in precies één game gespeeld.</li>
+      <li>Teams <b>schrijven in</b> voor toernooien. Per inschrijving bewaren we de inschrijvingsdatum, de eindplaats en het gewonnen prijzengeld. Zolang het toernooi niet gespeeld is, is de eindplaats nog onbekend. Een team schrijft maar één keer in voor hetzelfde toernooi.</li>
+    </ul>
+    <h3>Wat doen we?</h3>
+    <ol>
+      <li>Teken het ERD (op papier of digitaal) en zet het om naar een databaseontwerp.</li>
+      <li>Bouw het model <code>oef3_esports.mwb</code> en zet het om naar de databank <code>esports</code>.</li>
+      <li>Schrijf <code>oef3_esports_insert.sql</code> met minstens 3 games, 6 teams, 20 spelers (waarvan 2 free agents), 4 toernooien en 12 inschrijvingen. Bij minstens 4 inschrijvingen is de eindplaats nog onbekend.</li>
+      <li>Test de integriteit: probeer een inschrijving voor een team dat niet bestaat, en probeer een game te verwijderen waarvoor een toernooi gepland is.</li>
+    </ol>
+    <details>
+      <summary>Hint: optionele relatie</summary>
+      <div class="details-body">
+        <p>Free agents hebben geen team: de RS <code>teamID</code> in <code>speler</code> moet leeg kunnen blijven. Vink bij de relatie <span class="ui">Mandatory</span> uit aan de kant van <span class="ui">Referenced Table</span> (zoals bij <code>campingzone</code> in stap 5). In het insert-script schrijven we dan <code>NULL</code>.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Hint: welke primaire sleutel voor de inschrijving?</summary>
+      <div class="details-body">
+        <p>Een team schrijft maar één keer in voor hetzelfde toernooi. De combinatie <code>(teamID, toernooiID)</code> is dus altijd uniek en kan de samengestelde PS zijn. Vergelijk met <code>optreden</code>: daar kon dezelfde combinatie meermaals voorkomen. Een surrogaatsleutel <code>inschrijvingID</code> is ook goed, als je dat kan verantwoorden.</p>
+      </div>
+    </details>
+    <aside class="note tip">
+      <p class="note-title">Uitbreiding <span class="level" role="img" aria-label="uitdaging"><i class="on"></i><i class="on"></i><i class="on"></i></span></p>
+      <p>Elk team heeft een kapitein: één van de spelers. Voeg in <code>team</code> een kolom <code>kapiteinID</code> toe die naar <code>speler</code> verwijst. Nu verwijst <code>speler</code> naar <code>team</code> én <code>team</code> naar <code>speler</code>. In welke volgorde vul je dan de tabellen? Tip: een kolom die leeg mag zijn, kan je later invullen met <code>UPDATE team SET kapiteinID = … WHERE teamID = …;</code></p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== OEFENING 4 -->
+  <section class="exercise" id="oef4">
+    <h2>Oefening 4: Voetbalcompetitie <span class="level" role="img" aria-label="moeilijkheid 3 van 3"><i class="on"></i><i class="on"></i><i class="on"></i></span></h2>
+    <ul class="meta-list"><li>Schema: <code>voetbal</code></li><li>Gegeven: ERD</li><li>Nieuw: een 1:1-relatie en twee relaties naar dezelfde tabel</li></ul>
+    <p>Een regionale voetbalbond houdt de competitie bij. Elke <b>club</b> heeft een unieke naam, een uniek stamnummer en een oprichtingsjaar, en speelt in precies één eigen <b>stadion</b>. Een club heeft spelers. Een <b>wedstrijd</b> wordt gespeeld op een speeldag, datum en aftrapuur tussen een thuisploeg en een uitploeg. Na de wedstrijd vullen we het aantal doelpunten van beide ploegen in.</p>
+  </section>
+</div>
+<div class="bleed">
+  <figure>
+    <div class="diagram" style="max-width:840px"><img src="img/erd-voetbal.svg" width="820" height="480" alt="ERD van de voetbalcompetitie: Stadion en Club 1 op 1, Club heeft Spelers, Club is thuisploeg en uitploeg van Wedstrijd."></div>
+    <figcaption>Het ERD van de voetbalcompetitie. Tussen Club en Wedstrijd lopen twee relaties.</figcaption>
+  </figure>
+</div>
+<div class="content">
+  <h3>Wat doen we?</h3>
+  <ol>
+    <li>Zet het ERD om naar een databaseontwerp. Let op de 1:1-relatie en de twee relaties tussen <code>club</code> en <code>wedstrijd</code>.</li>
+    <li>Bouw het model <code>oef4_voetbal.mwb</code> en zet het om naar de databank <code>voetbal</code>.</li>
+    <li>Schrijf <code>oef4_voetbal_insert.sql</code> met minstens 4 clubs met hun stadion, 12 spelers en 6 wedstrijden, waarvan 2 nog niet gespeeld.</li>
+    <li>Test: kan je twee clubs in hetzelfde stadion laten spelen? Dat zou niet mogen.</li>
+  </ol>
+  <details>
+    <summary>Hint: de 1:1-relatie club en stadion</summary>
+    <div class="details-body">
+      <p>Gebruik <span class="ui">Place a New 1:1 Non-Identifying Relationship</span>: klik eerst op <code>club</code>, dan op <code>stadion</code>. De club krijgt een RS <code>stadionID</code>. Vink in de tabeleditor ook <b>UQ</b> aan bij <code>stadionID</code>. Zonder UQ kunnen twee clubs naar hetzelfde stadion verwijzen, en is het in de databank toch een 1:n-relatie.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Hint: twee relaties naar dezelfde tabel</summary>
+    <div class="details-body">
+      <p>Leg twee keer een 1:n-relatie: klik telkens eerst op <code>wedstrijd</code>, dan op <code>club</code>. Omdat de kolom <code>clubID</code> al bestaat, geeft Workbench de tweede RS een andere naam. Hernoem de kolommen naar <code>thuisclubID</code> en <code>uitclubID</code>. Een RS hoeft dus niet dezelfde naam te hebben als de PS waarnaar ze verwijst.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Hint: doelpunten van een wedstrijd die nog niet gespeeld is</summary>
+    <div class="details-body">
+      <p><code>doelpuntenThuis</code> en <code>doelpuntenUit</code> blijven leeg tot de wedstrijd gespeeld is: laat NN uit en schrijf <code>NULL</code> in het script. Let op: <code>0</code> zou betekenen dat het 0-0 werd.</p>
+    </div>
+  </details>
+  <aside class="note tip">
+    <p class="note-title">Uitbreiding</p>
+    <p>Houd ook de <b>doelpunten</b> bij: wie scoorde in welke wedstrijd, in welke minuut, en was het een eigen doelpunt? Kloppen de doelpunten in je script met de eindstand van elke wedstrijd?</p>
+  </aside>
+
+  <!-- ===================================================== OEFENING 5 -->
+  <section class="exercise" id="oef5">
+    <h2>Oefening 5: Van cursus naar databank <span class="level" role="img" aria-label="moeilijkheid 2 van 3"><i class="on"></i><i class="on"></i><i></i></span></h2>
+    <ul class="meta-list"><li>Schema: kies zelf een gepaste naam</li><li>Gegeven: je eigen ERD uit de cursus</li><li>Nieuw: een eigen ontwerp implementeren</li></ul>
+    <p>In de cursus Data-ontwerp (hoofdstuk 2.8) tekenden we al heel wat ERD's. Kies er <b>twee</b> uit deze lijst en implementeer ze: model, Forward Engineer en een insert-script met minstens vijf rijen per tabel.</p>
+    <ul>
+      <li>Oefening 5: Atletiek</li>
+      <li>Oefening 6: KVLV</li>
+      <li>Oefening 7: Sweet Paradise</li>
+      <li>Oefening 8: Olympisch comité</li>
+      <li>Oefening 10: Consultants</li>
+      <li>Oefening 13: Bibliotheek (vergelijk met het uitgewerkte voorbeeld in 3.4)</li>
+    </ul>
+    <aside class="note course">
+      <p class="note-title">Let op deze valkuilen uit de cursus</p>
+      <ul>
+        <li><b>Procesgegevens</b> bewaren we niet. Bij Sweet Paradise wil de ploegleiding de leeftijd kunnen opvragen: we bewaren de geboortedatum (2.7.3).</li>
+        <li><b>Samengestelde attributen</b> splitsen we als we de delen apart gebruiken: een adres wordt straat en nummer, postcode en gemeente (2.7.2).</li>
+        <li>Een <b>vaste keuzelijst</b> (lokaal, nationaal, internationaal) wordt een eigen tabel met een 1:n-relatie.</li>
+        <li>Een land heeft een internationale afkorting. Gebruik je die als PS, of kies je toch een surrogaatsleutel (1.1.2)? Verantwoord je keuze.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ===================================================== OEFENING 6 -->
+  <section class="exercise" id="oef6">
+    <h2>Oefening 6: Eindopdracht, een eigen ontwerp <span class="level" role="img" aria-label="moeilijkheid 3 van 3"><i class="on"></i><i class="on"></i><i class="on"></i></span></h2>
+    <ul class="meta-list"><li>Schema: kies zelf</li><li>Gegeven: niets, enkel de eisen</li><li>Nieuw: alles zelf, van probleemstelling tot test</li></ul>
+    <p>We ontwerpen en implementeren een databank over een onderwerp dat we zelf kiezen. Inspiratie:</p>
+    <ul>
+      <li>Een jeugdbeweging: leden, takken, leiding, activiteiten en inschrijvingen.</li>
+      <li>Een sneakerwebshop: producten, maten, klanten, bestellingen en bestellijnen.</li>
+      <li>De schoolfuif: tickettypes, verkochte tickets, vrijwilligers en shiften.</li>
+      <li>Je gamecollectie: games, platformen, vrienden en uitleningen.</li>
+      <li>Een sportclub: leden, ploegen, trainingen en aanwezigheden.</li>
+    </ul>
+
+    <h3>Eisen</h3>
+    <ul>
+      <li>Minstens 5 tabellen.</li>
+      <li>Minstens één 1:n-relatie, één m:n-relatie mét attributen en één optionele relatie.</li>
+      <li>Bewust gekozen datatypes, en NN en UQ waar dat zinvol is.</li>
+      <li>Per refererende sleutel een verantwoorde keuze voor ON DELETE.</li>
+      <li>Een insert-script dat zonder fouten loopt na Forward Engineer, met minstens 10 rijen in de belangrijkste tabellen en 5 in de andere.</li>
+    </ul>
+
+    <h3>Wat leveren we in?</h3>
+    <ol>
+      <li>Een probleemstelling van 5 tot 10 zinnen, zoals in de cursus.</li>
+      <li>Het ERD en het databaseontwerp in de notatie van de cursus.</li>
+      <li>Het model <code>.mwb</code>.</li>
+      <li>Het create-script (bewaard bij Forward Engineer) en het insert-script.</li>
+      <li>Een korte reflectie: verantwoord drie ontwerpkeuzes (bijvoorbeeld een PS, een datatype en een ON DELETE).</li>
+    </ol>
+
+    <h3>Waarop letten we bij de evaluatie?</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Onderdeel</th><th>We kijken na of …</th><th>Gewicht</th></tr></thead>
+      <tbody>
+        <tr><td>Ontwerp</td><td>het ERD de probleemstelling correct weergeeft, met juiste cardinaliteit en optionaliteit</td><td>25 %</td></tr>
+        <tr><td>Model</td><td>tabellen, sleutels, relaties en datatypes correct zijn en de naamgeving klopt</td><td>30 %</td></tr>
+        <tr><td>Gegevens</td><td>het insert-script foutloos loopt, in de juiste volgorde, met realistische gegevens</td><td>25 %</td></tr>
+        <tr><td>Integriteit</td><td>de keuzes voor ON DELETE verantwoord en getest zijn</td><td>10 %</td></tr>
+        <tr><td>Afwerking</td><td>alle bestanden aanwezig zijn en de reflectie de keuzes duidelijk uitlegt</td><td>10 %</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <aside class="note check">
+    <p class="note-title">Mijn voortgang</p>
+    <ul class="checklist" data-key="oefeningen">
+      <li><label><input type="checkbox"><span>Oefening 1: Boodschappenlijst</span></label></li>
+      <li><label><input type="checkbox"><span>Oefening 2: Streamingdienst Kijkbox</span></label></li>
+      <li><label><input type="checkbox"><span>Oefening 3: Esports-toernooi</span></label></li>
+      <li><label><input type="checkbox"><span>Oefening 4: Voetbalcompetitie</span></label></li>
+      <li><label><input type="checkbox"><span>Oefening 5: Van cursus naar databank</span></label></li>
+      <li><label><input type="checkbox"><span>Oefening 6: Eindopdracht</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende pagina"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

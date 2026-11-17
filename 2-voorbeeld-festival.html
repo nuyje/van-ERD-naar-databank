@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 2: Ons voorbeeld, festival Zomerklanken | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 2 van 8</p>
+  <h1>Ons voorbeeld: festival Zomerklanken</h1>
+  <p class="lead">In alle volgende stappen werken we één voorbeeld volledig uit: de databank voor de app van een zomerfestival. We lezen de probleemstelling, bekijken het ERD en zetten het om naar een volledig databaseontwerp.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_2</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We zetten het ERD van festival Zomerklanken om naar een volledig databaseontwerp.</li>
+      <li>We beslissen waar een surrogaatsleutel nodig is.</li>
+      <li>We noteren per kolom het datatype en de eigenschappen.</li>
+    </ul>
+  </figure>
+
+  <h2>De probleemstelling</h2>
+  <p>Festival Zomerklanken vindt plaats van vrijdag 9 tot zondag 11 juli 2027. De organisatie wil een databank voor de festival-app.</p>
+  <ul>
+    <li>Van elke <b>artiest</b> bewaren we de naam en het land. Elke artiest hoort bij precies één <b>genre</b> (pop, rock, hiphop …). Een genre kan (nog) zonder artiesten zijn.</li>
+    <li>Het festival heeft meerdere <b>podia</b>. Van een podium bewaren we de naam, de capaciteit en of het overdekt is.</li>
+    <li>Een artiest <b>treedt op</b> op een podium, op een datum, van een beginuur tot een einduur. Een artiest kan meerdere keren optreden, zelfs twee keer op hetzelfde podium op een andere dag. Een geannuleerde artiest heeft geen optredens.</li>
+    <li>Van een <b>bezoeker</b> bewaren we voornaam, familienaam, e-mailadres en geboortedatum. Een e-mailadres hoort bij één bezoeker.</li>
+    <li>In de app kan een bezoeker artiesten als <b>favoriet</b> aanduiden.</li>
+    <li>Bezoekers kunnen kamperen in een <b>campingzone</b>, met een naam en een maximaal aantal tenten. Niet elke bezoeker kampeert.</li>
+  </ul>
+
+  <h2>Het ERD</h2>
+</div>
+<div class="bleed">
+  <figure>
+    <div class="diagram" style="max-width:840px"><img src="img/erd-festival.svg" width="820" height="450" alt="ERD van festival Zomerklanken met de entiteiten Genre, Artiest, Podium, Campingzone en Bezoeker en de relaties behoort tot, treedt op op, kampeert in en volgt."></div>
+    <figcaption>Het ERD in de notatie van de cursus. Het vette attribuut identificeert de entiteit. Onder de relatie <i>treedt op op</i> staan de attributen van die relatie.</figcaption>
+  </figure>
+</div>
+<div class="content">
+  <p>We lezen elke relatie in twee richtingen:</p>
+  <ul>
+    <li><b>behoort tot</b>: een artiest behoort tot precies één genre; een genre heeft nul, één of meerdere artiesten.</li>
+    <li><b>treedt op op</b>: een artiest treedt op op nul of meer podia; op een podium treden nul of meer artiesten op. Bij elk optreden horen een datum, een beginuur en een einduur.</li>
+    <li><b>kampeert in</b>: een bezoeker kampeert in nul of één campingzone; in een zone kamperen nul of meer bezoekers.</li>
+    <li><b>volgt</b>: een bezoeker volgt nul of meer artiesten; een artiest wordt door nul of meer bezoekers gevolgd.</li>
+  </ul>
+
+  <h2>Van ERD naar databaseontwerp</h2>
+  <p>We passen de regels uit stap 1 één voor één toe.</p>
+  <ol class="steps">
+    <li><p><b>Entiteiten worden tabellen.</b> We krijgen <code>genre</code>, <code>artiest</code>, <code>podium</code>, <code>campingzone</code> en <code>bezoeker</code>.</p></li>
+    <li><p><b>behoort tot</b> is een 1:n-relatie zonder attributen. De PS van de één-kant gaat als RS naar de veel-kant: <code>artiest</code> krijgt <code>genreID</code>.</p></li>
+    <li><p><b>kampeert in</b> is ook 1:n zonder attributen: <code>bezoeker</code> krijgt <code>campingzoneID</code>. Door het cirkeltje bij Campingzone mag die RS <b>leeg</b> blijven: niet elke bezoeker kampeert.</p></li>
+    <li><p><b>volgt</b> is een m:n-relatie zonder attributen. We maken een extra tabel <code>favoriet(bezoekerID, artiestID)</code>. De twee kolommen vormen samen de PS: een bezoeker kan dezelfde artiest maar één keer als favoriet aanduiden.</p></li>
+    <li><p><b>treedt op op</b> is een m:n-relatie mét attributen. We maken een extra tabel <code>optreden</code> met <code>artiestID</code>, <code>podiumID</code>, <code>datum</code>, <code>beginuur</code> en <code>einduur</code>.</p>
+      <p>Welke PS? De combinatie <code>(artiestID, podiumID)</code> is niet uniek: Neon Atlas speelt op vrijdag én zondag op het Hoofdpodium. Daarom krijgt <code>optreden</code> een eigen surrogaatsleutel <code>optredenID</code>.</p></li>
+  </ol>
+
+  <p>In de notatie van de cursus: de <span class="pk">PS</span> en de <span class="fk">RS</span> zijn aangeduid.</p>
+  <ul class="schema">
+    <li>genre(<span class="pk">genreID</span>, naam)</li>
+    <li>artiest(<span class="pk">artiestID</span>, naam, land, <span class="fk">genreID</span>)</li>
+    <li>podium(<span class="pk">podiumID</span>, naam, capaciteit, overdekt)</li>
+    <li>optreden(<span class="pk">optredenID</span>, datum, beginuur, einduur, <span class="fk">artiestID</span>, <span class="fk">podiumID</span>)</li>
+    <li>campingzone(<span class="pk">campingzoneID</span>, naam, maxTenten)</li>
+    <li>bezoeker(<span class="pk">bezoekerID</span>, voornaam, familienaam, email, geboortedatum, <span class="fk">campingzoneID</span>)</li>
+    <li>favoriet(<span class="pk"><span class="fk">bezoekerID</span></span>, <span class="pk"><span class="fk">artiestID</span></span>)</li>
+  </ul>
+
+  <h2>Het volledige ontwerp</h2>
+  <p>Per tabel noteren we nu datatypes en eigenschappen. Dit is precies wat we in stap 4 en 5 in Workbench ingeven. Een <span class="yes">✓</span> betekent: vinkje aan.</p>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>genre</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>genreID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td><td>geen twee genres met dezelfde naam</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>artiest</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>artiestID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(60)</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>land</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>genreID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar genre, maakt Workbench in stap 5</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>podium</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>podiumID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>capaciteit</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>overdekt</code></td><td>TINYINT(1)</td><td></td><td class="yes">✓</td><td></td><td></td><td>standaardwaarde 0 (= nee)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>optreden</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>optredenID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td>surrogaatsleutel</td></tr>
+      <tr><td><code>datum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>beginuur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>einduur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>artiestID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar artiest, stap 5</td></tr>
+      <tr><td><code>podiumID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar podium, stap 5</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>campingzone</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>campingzoneID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>maxTenten</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>bezoeker</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>bezoekerID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>voornaam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>familienaam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>email</code></td><td>VARCHAR(100)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td><td>uniek per bezoeker</td></tr>
+      <tr><td><code>geboortedatum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td><td>geen leeftijd: die is een procesgegeven</td></tr>
+      <tr><td><code>campingzoneID</code></td><td>INT</td><td></td><td></td><td></td><td></td><td><span class="fk">RS</span> naar campingzone, <b>mag leeg</b>, stap 5</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>favoriet</code> (maakt Workbench zelf in stap 5)</caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>bezoekerID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td><td>PS én RS naar bezoeker</td></tr>
+      <tr><td><code>artiestID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td><td>PS én RS naar artiest</td></tr>
+    </tbody>
+  </table></div>
+
+  <aside class="note course">
+    <p class="note-title">Uit de cursus: procesgegevens</p>
+    <p>We bewaren de geboortedatum en niet de leeftijd. De leeftijd kunnen we altijd berekenen, en zo hoeven we ze niet elk jaar aan te passen (cursus 2.7.3).</p>
+  </aside>
+
+  <h2>Zo ziet ons diagram er straks uit</h2>
+  <p>Na stap 5 ziet ons EER-diagram in Workbench er ongeveer zo uit. De tabellen mogen bij jou anders geschikt staan.</p>
+</div>
+<div class="bleed">
+  <figure>
+    <div class="diagram" style="max-width:1100px"><img src="img/eer-festival.svg" width="1080" height="560" style="min-width:900px" alt="Schematische weergave van het EER-diagram van de databank festival met zeven tabellen en hun relaties."></div>
+    <figcaption>Vereenvoudigde weergave van het EER-diagram in Workbench. Sleutel: <span class="ico ico-pk"></span> primaire sleutel, <span class="ico ico-nn"></span> verplicht (NN), <span class="ico ico-null"></span> mag leeg, <span class="ico ico-fk"></span> refererende sleutel, <span class="ico ico-pfk"></span> primaire én refererende sleutel. Een stippellijn is een <i>non-identifying</i> relatie, een volle lijn een <i>identifying</i> relatie.</figcaption>
+  </figure>
+</div>
+<div class="content">
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap2">
+      <li><label><input type="checkbox"><span>Ik heb de probleemstelling gelezen en kan elke relatie in het ERD in twee richtingen lezen.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik begrijp waarom <code>optreden</code> een eigen sleutel <code>optredenID</code> krijgt.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik begrijp waarom <code>campingzoneID</code> in <code>bezoeker</code> leeg mag zijn.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik weet dat de tabel <code>favoriet</code> de m:n-relatie <i>volgt</i> voorstelt.</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

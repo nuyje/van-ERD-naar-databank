@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spiekbrief | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <h1>Spiekbrief</h1>
+  <p class="lead">Alles wat we nodig hebben op één pagina. Handig om naast Workbench open te houden, of om af te drukken.</p>
+
+  <h2>De route</h2>
+  <ol class="steps">
+    <li><p><b>ERD</b> omzetten naar een databaseontwerp: tabellen, PS, RS, datatypes.</p></li>
+    <li><p><b>Nieuw model</b>: <span class="menu-path">File <span class="sep">›</span> New Model</span>, schema hernoemen, <span class="ui">Add Diagram</span>.</p></li>
+    <li><p><b>Tabellen</b> plaatsen met hun eigen kolommen, nog zonder RS.</p></li>
+    <li><p><b>Relaties</b> leggen: eerst de veel-kant, dan de één-kant.</p></li>
+    <li><p><b>Forward Engineer</b> naar de server.</p></li>
+    <li><p><b>Insert-script</b> uitvoeren: eerst ouders, dan kinderen.</p></li>
+  </ol>
+
+  <h2>Waar vind ik het in Workbench?</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Wat?</th><th>Menu of gereedschap</th><th>Sneltoets</th></tr></thead>
+    <tbody>
+      <tr><td>Sleutelnamen instellen</td><td><span class="menu-path">Edit <span class="sep">›</span> Preferences <span class="sep">›</span> Modeling <span class="sep">›</span> Defaults</span></td><td></td></tr>
+      <tr><td>Nieuw model</td><td><span class="menu-path">File <span class="sep">›</span> New Model</span></td><td><kbd>Ctrl</kbd> + <kbd>N</kbd></td></tr>
+      <tr><td>Tabel plaatsen</td><td><span class="ui">Place a New Table</span></td><td><kbd>T</kbd></td></tr>
+      <tr><td>1:1-relatie</td><td><span class="ui">Place a New 1:1 Non-Identifying Relationship</span></td><td><kbd>1</kbd></td></tr>
+      <tr><td>1:n-relatie</td><td><span class="ui">Place a New 1:n Non-Identifying Relationship</span></td><td><kbd>2</kbd></td></tr>
+      <tr><td>m:n-relatie met koppeltabel</td><td><span class="ui">Place a New n:m Identifying Relationship</span></td><td><kbd>5</kbd></td></tr>
+      <tr><td>Relatie bewerken (Mandatory)</td><td>Dubbelklik op de lijn, tabblad <span class="ui">Foreign Key</span></td><td></td></tr>
+      <tr><td>ON DELETE / ON UPDATE</td><td>Tabeleditor, tabblad <span class="ui">Foreign Keys</span></td><td></td></tr>
+      <tr><td>Model naar databank</td><td><span class="menu-path">Database <span class="sep">›</span> Forward Engineer…</span></td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr>
+      <tr><td>Wijzigingen doorvoeren</td><td><span class="menu-path">Database <span class="sep">›</span> Synchronize Model…</span></td><td><kbd>Ctrl</kbd> + <kbd>Y</kbd></td></tr>
+      <tr><td>Databank naar model</td><td><span class="menu-path">Database <span class="sep">›</span> Reverse Engineer…</span></td><td><kbd>Ctrl</kbd> + <kbd>R</kbd></td></tr>
+      <tr><td>Nieuwe query-tab</td><td><span class="menu-path">File <span class="sep">›</span> New Query Tab</span></td><td><kbd>Ctrl</kbd> + <kbd>T</kbd></td></tr>
+      <tr><td>Alles uitvoeren</td><td>Bliksem-icoon</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd></td></tr>
+      <tr><td>Eén opdracht uitvoeren</td><td>Bliksem met cursor</td><td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Kolomeigenschappen</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Vinkje</th><th>Betekenis</th><th>Icoon in het diagram</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pk">PK</span></td><td>Primaire sleutel</td><td><span class="ico ico-pk"></span></td></tr>
+      <tr><td><span class="nn">NN</span></td><td>Moet ingevuld zijn</td><td><span class="ico ico-nn"></span> (zonder NN: <span class="ico ico-null"></span>)</td></tr>
+      <tr><td><b>UQ</b></td><td>Elke waarde maar één keer</td><td></td></tr>
+      <tr><td><b>AI</b></td><td>Server nummert zelf</td><td></td></tr>
+      <tr><td><span class="fk">RS</span></td><td>Maakt Workbench bij een relatie</td><td><span class="ico ico-fk"></span> (PS én RS: <span class="ico ico-pfk"></span>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Datatypes</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Gegeven</th><th>Datatype</th></tr></thead>
+    <tbody>
+      <tr><td>ID, aantal</td><td><code>INT</code></td></tr>
+      <tr><td>Bedrag, exact kommagetal</td><td><code>DECIMAL(8,2)</code></td></tr>
+      <tr><td>Naam, e-mail, telefoon</td><td><code>VARCHAR(n)</code></td></tr>
+      <tr><td>Postcode (BE)</td><td><code>CHAR(4)</code></td></tr>
+      <tr><td>Lange tekst</td><td><code>TEXT</code></td></tr>
+      <tr><td>Datum / tijd / beide</td><td><code>DATE</code> / <code>TIME</code> / <code>DATETIME</code></td></tr>
+      <tr><td>Jaartal</td><td><code>YEAR</code></td></tr>
+      <tr><td>Ja of nee</td><td><code>TINYINT(1)</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>INSERT INTO</h2>
+  <div class="code">
+<pre><code>INSERT INTO tabel (kolom1, kolom2, kolom3) VALUES
+(1, 'tekst', '2027-07-09'),
+(2, 'D''Hondt', NULL);</code></pre>
+  </div>
+  <ul>
+    <li>Tekst en datums tussen <code>'…'</code>; getallen zonder; kommagetallen met een punt.</li>
+    <li>Datum <code>'JJJJ-MM-DD'</code>, tijd <code>'UU:MM:SS'</code>, leeg = <code>NULL</code>.</li>
+    <li>Volgorde: eerst tabellen zonder RS, dan de tabellen die ernaar verwijzen.</li>
+  </ul>
+
+  <h2>Foutcodes</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Code</th><th>Betekenis in het kort</th></tr></thead>
+    <tbody>
+      <tr><td>1062</td><td>Waarde bestaat al (PK of UQ)</td></tr>
+      <tr><td>1452</td><td>RS verwijst naar een rij die niet bestaat</td></tr>
+      <tr><td>1451</td><td>Ouder heeft nog kinderen (RESTRICT)</td></tr>
+      <tr><td>1048</td><td>NULL in een verplichte kolom</td></tr>
+      <tr><td>1364</td><td>Verplichte kolom vergeten</td></tr>
+      <tr><td>1136</td><td>Aantal waarden klopt niet met aantal kolommen</td></tr>
+      <tr><td>1406</td><td>Tekst te lang voor de kolom</td></tr>
+      <tr><td>1292</td><td>Verkeerde datum- of tijdnotatie</td></tr>
+      <tr><td>1366</td><td>Tekst in een getalkolom</td></tr>
+      <tr><td>1064</td><td>Schrijffout in de SQL (komma, haakje, apostrof)</td></tr>
+      <tr><td>3780</td><td>RS en PS hebben een ander datatype</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>ON DELETE</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Optie</th><th>Bij verwijderen van de ouder …</th></tr></thead>
+    <tbody>
+      <tr><td><code>RESTRICT</code> / <code>NO ACTION</code></td><td>… weigert de server zolang er kinderen zijn.</td></tr>
+      <tr><td><code>CASCADE</code></td><td>… verdwijnen de kinderen mee.</td></tr>
+      <tr><td><code>SET NULL</code></td><td>… wordt de RS van de kinderen leeg.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende pagina"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

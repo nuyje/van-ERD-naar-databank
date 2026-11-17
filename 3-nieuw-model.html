@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 3: Een nieuw model in Workbench | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 3 van 8</p>
+  <h1>Een nieuw model in Workbench</h1>
+  <p class="lead">Een model is een tekening van onze databank: tabellen, kolommen en relaties. Het staat los van de server. Pas in stap 6 zetten we het om naar een echte databank.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_3</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We maken een nieuw model met een schema <code>festival</code> en een leeg EER-diagram.</li>
+      <li>We stellen Workbench zo in dat sleutels automatisch goede namen krijgen.</li>
+      <li>We controleren of de verbinding met onze MySQL-server werkt.</li>
+    </ul>
+  </figure>
+
+  <h2>Model of databank?</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th></th><th>Model</th><th>Databank</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Wat?</th><td>Een tekening (EER-diagram) van tabellen en relaties</td><td>Echte tabellen met gegevens</td></tr>
+      <tr><th scope="row">Waar?</th><td>In een bestand <code>.mwb</code> op onze computer</td><td>Op de MySQL-server</td></tr>
+      <tr><th scope="row">Werken met</th><td>Het tabblad <span class="ui">MySQL Model</span> en <span class="ui">EER Diagram</span></td><td>Een verbinding (SQL-editor)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Met <b>Forward Engineer</b> maakt Workbench van het model een databank. Andersom kan ook: met <b>Reverse Engineer</b> maakt Workbench een model van een bestaande databank.</p>
+
+  <h2>A. De verbinding controleren</h2>
+  <ol class="steps">
+    <li><p>Start MySQL Workbench. Op het startscherm staat onder <span class="ui">MySQL Connections</span> een tegel, meestal <span class="ui">Local instance MySQL80</span> of iets gelijkaardigs.</p></li>
+    <li><p>Klik op de tegel en geef het wachtwoord in. Opent er een tabblad met links een <span class="ui">Navigator</span>? Dan werkt de verbinding. We mogen dit tabblad sluiten.</p></li>
+  </ol>
+  <aside class="note warn">
+    <p class="note-title">Geen verbinding?</p>
+    <p>Meldt Workbench dat het niet kan verbinden, dan draait de MySQL-server waarschijnlijk niet. Typ in Windows <kbd>Windows</kbd> + <kbd>R</kbd>, dan <code>services.msc</code>, zoek de service <b>MySQL80</b> en kies <b>Starten</b>. Klopt het wachtwoord niet, vraag het dan aan je leraar.</p>
+  </aside>
+
+  <h2>B. Workbench instellen (één keer)</h2>
+  <p>Workbench verzint zelf namen voor primaire en refererende sleutels. Standaard heet de PS van tabel <code>artiest</code> dan <code>idartiest</code> en de RS in een andere tabel <code>artiest_idartiest</code>. Met twee kleine instellingen volgen die namen onze afspraken: <code>artiestID</code> en <code>artiestID</code>.</p>
+  <ol class="steps">
+    <li><p>Kies in het menu <span class="menu-path">Edit <span class="sep">›</span> Preferences…</span></p></li>
+    <li><p>Kies links <span class="menu-path">Modeling <span class="sep">›</span> Defaults</span>.</p></li>
+    <li><p>Vervang bij <span class="ui">Column Defaults</span> de waarde van <span class="ui">PK Column Name</span> door <code>%table%ID</code>.</p></li>
+    <li><p>Vervang bij <span class="ui">Foreign Key/Relationship Defaults</span> de waarde van <span class="ui">Column Name</span> door <code>%column%</code>.</p></li>
+    <li><p>Klik op <span class="ui">OK</span>.</p></li>
+  </ol>
+
+  <div class="wb" role="img" aria-label="Vereenvoudigde weergave van het venster Workbench Preferences, onderdeel Modeling, Defaults">
+    <div class="wb-title"><span>Workbench Preferences</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-body">
+      <div class="wb-cols">
+        <div class="wb-box">
+          <div>General Editors</div><div>SQL Editor</div><div>Administration</div>
+          <div><b>Modeling</b></div><div style="padding-left:1rem;background:var(--gold-soft)"><b>Defaults</b></div>
+          <div style="padding-left:1rem">MySQL</div><div style="padding-left:1rem">Diagram</div><div>Fonts &amp; Colors</div>
+        </div>
+        <div class="wb-box" style="grid-column: span 2">
+          <div class="wb-section">Column Defaults</div>
+          <div class="wb-row"><span style="min-width:9.5rem">PK Column Name:</span><span class="wb-field" style="outline:2px solid var(--gold)">%table%ID</span><span class="callout-num">1</span></div>
+          <div class="wb-row"><span style="min-width:9.5rem">PK Column Type:</span><span class="wb-field">INT</span></div>
+          <div class="wb-row"><span style="min-width:9.5rem">Column Name:</span><span class="wb-field">%table%col</span></div>
+          <div class="wb-row"><span style="min-width:9.5rem">Column Type:</span><span class="wb-field">VARCHAR(45)</span></div>
+          <div class="wb-section">Foreign Key/Relationship Defaults</div>
+          <div class="wb-row"><span style="min-width:9.5rem">FK Name:</span><span class="wb-field">fk_%stable%_%dtable%</span></div>
+          <div class="wb-row"><span style="min-width:9.5rem">Column Name:</span><span class="wb-field" style="outline:2px solid var(--gold)">%column%</span><span class="callout-num">2</span></div>
+          <div class="wb-row"><span style="min-width:9.5rem">Associative Table:</span><span class="wb-field">%stable%_has_%dtable%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="small muted">In <code>%table%ID</code> vult Workbench de naam van de tabel in, in <code>%column%</code> de naam van de kolom waarnaar de RS verwijst.</p>
+
+  <aside class="note tip">
+    <p class="note-title">Vergeten of op een andere computer?</p>
+    <p>Geen ramp. We kunnen elke kolom achteraf hernoemen in de tabeleditor. Het is wel sneller als Workbench meteen de goede naam voorstelt.</p>
+  </aside>
+
+  <h2>C. Een nieuw model aanmaken</h2>
+  <ol class="steps">
+    <li><p>Kies <span class="menu-path">File <span class="sep">›</span> New Model</span> (<kbd>Ctrl</kbd> + <kbd>N</kbd>). Er opent een tabblad <span class="ui">MySQL Model</span>.</p></li>
+    <li><p>Onder <span class="ui">Physical Schemas</span> staat al een schema met de naam <code>mydb</code>. Dubbelklik op het icoon van <code>mydb</code>. Onderaan opent de schema-editor.</p></li>
+    <li><p>Typ bij <span class="ui">Name</span>: <code>festival</code>.</p></li>
+    <li><p>Kies bij <span class="ui">Charset/Collation</span> de tekenset <code>utf8mb4</code> en de sortering <code>utf8mb4_0900_ai_ci</code>. Zo kunnen we alle tekens bewaren, ook é, ë, ç en zelfs emoji.</p></li>
+    <li><p>Bewaar het model: <span class="menu-path">File <span class="sep">›</span> Save Model As…</span> Kies je map <code>Databeheer</code> en de naam <code>festival.mwb</code>. Daarna bewaren we gewoon met <kbd>Ctrl</kbd> + <kbd>S</kbd>.</p></li>
+  </ol>
+
+  <div class="wb" role="img" aria-label="Vereenvoudigde weergave van het tabblad MySQL Model met Add Diagram en het schema festival">
+    <div class="wb-title"><span>MySQL Model</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-body">
+      <div class="wb-section">EER Diagrams</div>
+      <div class="wb-row"><span class="wb-icon hl">Add Diagram</span><span class="small">stap D</span></div>
+      <div class="wb-section">Physical Schemas</div>
+      <div class="wb-row"><span class="wb-btn primary"><b>festival</b></span><span class="small">tabblad van het schema, was eerst <code>mydb</code></span></div>
+      <div class="wb-row"><span class="wb-icon">Add Table</span><span class="wb-icon">Add View</span><span class="wb-icon">Add Routine</span></div>
+      <div class="wb-section">Schema-editor (onderaan)</div>
+      <div class="wb-row"><span style="min-width:8rem">Name:</span><span class="wb-field">festival</span></div>
+      <div class="wb-row"><span style="min-width:8rem">Charset/Collation:</span><span class="wb-field" style="min-width:6rem">utf8mb4</span><span class="wb-field" style="min-width:11rem">utf8mb4_0900_ai_ci</span></div>
+    </div>
+  </div>
+
+  <h2>D. Een EER-diagram toevoegen</h2>
+  <ol class="steps">
+    <li><p>Dubbelklik op <span class="ui">Add Diagram</span> bij <span class="ui">EER Diagrams</span>. Er opent een tabblad <span class="ui">EER Diagram</span> met een leeg tekenvlak.</p></li>
+    <li><p>Bekijk het scherm. Links staat een verticale werkbalk met tekengereedschap, in het midden het tekenvlak en rechts de <span class="ui">Catalog Tree</span> met ons schema. Onderaan verschijnt straks de editor van wat we aanklikken.</p></li>
+    <li><p>Beweeg met de muis over de knoppen van de werkbalk. Een tooltip toont de naam van elk gereedschap. Deze gebruiken we in de volgende stappen:</p></li>
+  </ol>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Gereedschap (tooltip)</th><th>Toets</th><th>Waarvoor?</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ui">Place a New Table</span></td><td><kbd>T</kbd></td><td>Een tabel op het tekenvlak zetten</td></tr>
+      <tr><td><span class="ui">Place a New 1:1 Non-Identifying Relationship</span></td><td><kbd>1</kbd></td><td>1:1-relatie</td></tr>
+      <tr><td><span class="ui">Place a New 1:n Non-Identifying Relationship</span></td><td><kbd>2</kbd></td><td>1:n-relatie, de tool die we het meest gebruiken</td></tr>
+      <tr><td><span class="ui">Place a New n:m Identifying Relationship</span></td><td><kbd>5</kbd></td><td>m:n-relatie: maakt zelf een koppeltabel</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small muted">De werkbalk heeft ook <i>identifying</i> versies van de 1:1- en 1:n-relatie (toetsen <kbd>3</kbd> en <kbd>4</kbd>) en een tool om een relatie te leggen met bestaande kolommen (<kbd>6</kbd>). Die hebben we voor ons voorbeeld niet nodig.</p>
+
+  <aside class="note tip">
+    <p class="note-title">Bewaar vaak</p>
+    <p>Druk regelmatig op <kbd>Ctrl</kbd> + <kbd>S</kbd>. Workbench bewaart ook automatisch een reservekopie, maar ons eigen <code>.mwb</code>-bestand is wat we indienen en wat we mee naar huis nemen.</p>
+  </aside>
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap3">
+      <li><label><input type="checkbox"><span>De verbinding met mijn MySQL-server werkt.</span></label></li>
+      <li><label><input type="checkbox"><span>In Preferences staat <span class="ui">PK Column Name</span> op <code>%table%ID</code> en de FK-<span class="ui">Column Name</span> op <code>%column%</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Mijn schema heet <code>festival</code> en gebruikt <code>utf8mb4</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Mijn model is bewaard als <code>festival.mwb</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb een leeg EER-diagram geopend en ken de tools uit de tabel.</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 4: Tabellen en kolommen | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 4 van 8</p>
+  <h1>Tabellen en kolommen</h1>
+  <p class="lead">We zetten de tabellen op het tekenvlak en geven ze hun kolommen. De refererende sleutels voegen we nu nog niet toe: die maakt Workbench voor ons in stap 5.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_4</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We maken de tabellen genre, artiest, podium, optreden, campingzone en bezoeker met hun eigen kolommen.</li>
+      <li>We stellen per kolom het datatype en de eigenschappen PK, NN, UQ en AI in.</li>
+      <li>We lezen de iconen naast de kolommen in het diagram.</li>
+    </ul>
+  </figure>
+
+  <h2>De eerste tabel: genre</h2>
+  <ol class="steps">
+    <li><p>Klik in de werkbalk op <span class="ui">Place a New Table</span> (of druk <kbd>T</kbd>) en klik daarna ergens op het tekenvlak. Er verschijnt een tabel <code>table1</code>.</p></li>
+    <li><p>Dubbelklik op <code>table1</code>. Onderaan opent de tabeleditor.</p></li>
+    <li><p>Typ bij <span class="ui">Table Name</span>: <code>genre</code> en druk op <kbd>Enter</kbd>.</p></li>
+    <li><p>Klik in het tabblad <span class="ui">Columns</span> in de eerste lege rij onder <span class="ui">Column Name</span>. Workbench vult zelf <code>genreID</code> in, met datatype <code>INT</code> en de vinkjes <span class="pk">PK</span> en <span class="nn">NN</span>.</p></li>
+    <li><p>Vink ook <b>AI</b> aan. De server nummert de genres dan zelf: 1, 2, 3 …</p></li>
+    <li><p>Klik in de volgende lege rij. Workbench stelt <code>genrecol</code> voor, met <code>VARCHAR(45)</code>. Overschrijf de naam met <code>naam</code>, laat het datatype staan en vink <span class="nn">NN</span> en <b>UQ</b> aan: twee genres met dezelfde naam hebben geen zin.</p></li>
+  </ol>
+
+  <div class="wb" role="img" aria-label="Vereenvoudigde weergave van de tabeleditor met de tabel genre">
+    <div class="wb-title"><span>Table: genre</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-body">
+      <div class="wb-row"><span style="min-width:6.5rem">Table Name:</span><span class="wb-field">genre</span><span>Schema: <b>festival</b></span></div>
+      <div class="wb-row"><span style="min-width:6.5rem">Engine:</span><span class="wb-field" style="min-width:6rem">InnoDB</span></div>
+      <table class="wb-grid" style="margin-top:0.6rem">
+        <thead><tr><th>Column Name</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>B</th><th>UN</th><th>ZF</th><th>AI</th><th>G</th><th>Default/Expression</th></tr></thead>
+        <tbody>
+          <tr><td class="name"><span class="ico ico-pk"></span> genreID</td><td>INT</td><td><span class="cb on"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb on hl"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr><td class="name"><span class="ico ico-nn"></span> naam</td><td>VARCHAR(45)</td><td><span class="cb"></span></td><td><span class="cb on hl"></span></td><td><span class="cb on hl"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr class="new"><td>klik hier voor een nieuwe kolom</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="wb-row" style="margin-top:0.6rem"><span class="wb-btn primary">Columns</span><span class="wb-btn">Indexes</span><span class="wb-btn">Foreign Keys</span><span class="wb-btn">Triggers</span><span class="wb-btn">Partitioning</span><span class="wb-btn">Options</span><span class="wb-btn">Inserts</span><span class="wb-btn">Privileges</span></div>
+    </div>
+  </div>
+
+  <aside class="note warn">
+    <p class="note-title">Eerst de tabelnaam, dan de kolommen</p>
+    <p>Workbench gebruikt de tabelnaam om de PS te benoemen. Voegen we eerst kolommen toe, dan heet de PS <code>table1ID</code>. Dat kunnen we nog oplossen door de kolom te hernoemen: dubbelklik op de naam in de lijst.</p>
+  </aside>
+
+  <h2>De iconen in het diagram</h2>
+  <p>Klik terug op het tekenvlak. De tabel <code>genre</code> toont nu haar kolommen, elk met een icoon:</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Icoon</th><th>Betekenis</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ico ico-pk"></span> gouden sleutel</td><td>Primaire sleutel</td></tr>
+      <tr><td><span class="ico ico-nn"></span> blauw ruitje, gevuld</td><td>Verplichte kolom (NN)</td></tr>
+      <tr><td><span class="ico ico-null"></span> wit ruitje</td><td>Kolom mag leeg blijven</td></tr>
+      <tr><td><span class="ico ico-fk"></span> rood ruitje</td><td>Refererende sleutel (zien we in stap 5)</td></tr>
+      <tr><td><span class="ico ico-pfk"></span> rode sleutel</td><td>Primaire én refererende sleutel (niet elke versie van Workbench toont dit icoon)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>De andere tabellen</h2>
+  <p>Maak op dezelfde manier de vijf andere tabellen. Werk tabel per tabel: eerst de naam, dan de kolommen. Een <span class="yes">✓</span> betekent: vinkje aan.</p>
+
+  <aside class="note warn">
+    <p class="note-title">Geen refererende sleutels typen</p>
+    <p>Voeg <b>geen</b> kolommen <code>genreID</code>, <code>artiestID</code>, <code>podiumID</code> of <code>campingzoneID</code> toe aan andere tabellen. Die maakt Workbench automatisch wanneer we in stap 5 de relaties leggen. Typen we ze zelf, dan riskeren we dubbele kolommen. Ook de tabel <code>favoriet</code> maken we pas in stap 5.</p>
+  </aside>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>artiest</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th></tr></thead>
+    <tbody>
+      <tr><td><code>artiestID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(60)</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>land</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>podium</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Default</th></tr></thead>
+    <tbody>
+      <tr><td><code>podiumID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>capaciteit</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
+      <tr><td><code>overdekt</code></td><td>TINYINT(1)</td><td></td><td class="yes">✓</td><td></td><td></td><td><code>0</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>optreden</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th></tr></thead>
+    <tbody>
+      <tr><td><code>optredenID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td></tr>
+      <tr><td><code>datum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>beginuur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>einduur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>campingzone</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th></tr></thead>
+    <tbody>
+      <tr><td><code>campingzoneID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td></tr>
+      <tr><td><code>naam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>maxTenten</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>bezoeker</code></caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th></tr></thead>
+    <tbody>
+      <tr><td><code>bezoekerID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td></tr>
+      <tr><td><code>voornaam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>familienaam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+      <tr><td><code>email</code></td><td>VARCHAR(100)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td></tr>
+      <tr><td><code>geboortedatum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <aside class="note tip">
+    <p class="note-title">Datatypes intypen</p>
+    <p>We hoeven het datatype niet uit de lijst te kiezen: we mogen het gewoon typen, bijvoorbeeld <code>DATE</code> of <code>TINYINT(1)</code>. Voor <code>overdekt</code> vullen we bij <span class="ui">Default/Expression</span> een <code>0</code> in. MySQL kent ook het woord <code>BOOLEAN</code>, maar bewaart dat als <code>TINYINT(1)</code>: 0 betekent nee, 1 betekent ja.</p>
+  </aside>
+  <aside class="note tip">
+    <p class="note-title">Netjes schikken</p>
+    <p>Sleep een tabel aan haar titelbalk naar een andere plaats. Schik de tabellen ongeveer zoals in het ERD van stap 2. Dan blijven de relatielijnen in stap 5 overzichtelijk.</p>
+  </aside>
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap4">
+      <li><label><input type="checkbox"><span>Ik heb zes tabellen: <code>genre</code>, <code>artiest</code>, <code>podium</code>, <code>optreden</code>, <code>campingzone</code> en <code>bezoeker</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Elke tabel heeft een PS met de vinkjes PK, NN en AI.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb de datatypes uit het ontwerp gebruikt, ook <code>DATE</code>, <code>TIME</code> en <code>TINYINT(1)</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>NN en UQ staan aan waar het ontwerp dat vraagt.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb nog geen refererende sleutels zelf getypt.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb mijn model bewaard.</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

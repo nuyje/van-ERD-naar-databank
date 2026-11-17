@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 6: Forward engineer | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 6 van 8</p>
+  <h1>Forward engineer: van model naar databank</h1>
+  <p class="lead">Ons model is klaar. Met Forward Engineer schrijft Workbench een SQL-script dat de databank op de server aanmaakt, en voert het meteen uit.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_6</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We zetten ons model met Forward Engineer om naar de databank <code>festival</code> op de server.</li>
+      <li>We lezen en begrijpen het gegenereerde CREATE-script.</li>
+      <li>We controleren de databank in de Navigator.</li>
+      <li>We weten hoe we een aangepast model opnieuw naar de server brengen.</li>
+    </ul>
+  </figure>
+
+  <h2>De wizard</h2>
+  <p>Forward Engineer is een wizard: een reeks schermen die we met <span class="ui">Next</span> doorlopen.</p>
+  <ol class="wizard" aria-label="Schermen van de wizard">
+    <li>Verbinding kiezen</li>
+    <li>Opties</li>
+    <li>Objecten kiezen</li>
+    <li>Script nakijken</li>
+    <li>Uitvoeren</li>
+  </ol>
+  <ol class="steps">
+    <li><p>Bewaar het model (<kbd>Ctrl</kbd> + <kbd>S</kbd>). Kies dan <span class="menu-path">Database <span class="sep">›</span> Forward Engineer…</span> (<kbd>Ctrl</kbd> + <kbd>G</kbd>).</p></li>
+    <li><p><b>Verbinding.</b> Kies bij <span class="ui">Stored Connection</span> onze verbinding, bijvoorbeeld <span class="ui">Local instance MySQL80</span>. Klik op <span class="ui">Next</span> en geef het wachtwoord in als Workbench erom vraagt.</p></li>
+    <li><p><b>Opties.</b> De eerste keer laten we alle vakjes uit. Klik op <span class="ui">Next</span>. Verderop lezen we wanneer we hier toch iets aanvinken.</p></li>
+    <li><p><b>Objecten.</b> Het vakje <span class="ui">Export MySQL Table Objects</span> staat aan. Er staan 7 tabellen klaar. Klik op <span class="ui">Next</span>.</p></li>
+    <li><p><b>Script nakijken.</b> Workbench toont het SQL-script dat het zal uitvoeren. Lees het even (zie hieronder). Met <span class="ui">Save to File…</span> kunnen we het bewaren, bijvoorbeeld als <code>festival_create.sql</code>. Klik op <span class="ui">Next</span>.</p></li>
+    <li><p><b>Uitvoeren.</b> Workbench voert het script uit en toont groene vinkjes. Klik op <span class="ui">Close</span>. Zien we een rood kruisje, lees dan de melding en kijk in de tabel onderaan deze pagina.</p></li>
+  </ol>
+
+  <h2>Wat staat er in het script?</h2>
+  <p>Workbench vertaalt elke tabel uit ons model naar een <code>CREATE TABLE</code>-opdracht. Zo ziet die van <code>artiest</code> eruit:</p>
+
+  <div class="code" data-file="uit festival_create.sql">
+<pre><code>CREATE SCHEMA IF NOT EXISTS `festival` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `festival` ;
+
+CREATE TABLE IF NOT EXISTS `festival`.`artiest` (
+  `artiestID` INT NOT NULL AUTO_INCREMENT,
+  `naam` VARCHAR(60) NOT NULL,
+  `land` VARCHAR(45) NOT NULL,
+  `genreID` INT NOT NULL,
+  PRIMARY KEY (`artiestID`),
+  INDEX `fk_artiest_genre_idx` (`genreID` ASC) VISIBLE,
+  CONSTRAINT `fk_artiest_genre`
+    FOREIGN KEY (`genreID`)
+    REFERENCES `festival`.`genre` (`genreID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;</code></pre>
+  </div>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Regel</th><th>Wat doet ze?</th></tr></thead>
+    <tbody>
+      <tr><td><code>CREATE SCHEMA IF NOT EXISTS</code></td><td>Maakt de databank <code>festival</code>, tenzij die al bestaat.</td></tr>
+      <tr><td><code>NOT NULL AUTO_INCREMENT</code></td><td>Onze vinkjes NN en AI.</td></tr>
+      <tr><td><code>PRIMARY KEY (`artiestID`)</code></td><td>Het vinkje PK.</td></tr>
+      <tr><td><code>INDEX `fk_artiest_genre_idx`</code></td><td>Een <b>index</b>: een soort register waarmee de server snel opzoekt welke artiesten bij een genre horen. MySQL wil een index op elke RS; Workbench maakt die automatisch.</td></tr>
+      <tr><td><code>CONSTRAINT … FOREIGN KEY … REFERENCES</code></td><td>De beperking die de <b>referentiële integriteit</b> bewaakt: <code>genreID</code> moet bestaan in <code>genre</code>.</td></tr>
+      <tr><td><code>ON DELETE NO ACTION</code></td><td>Wat er gebeurt als we een genre verwijderen dat nog gebruikt wordt. Daarover gaat stap 8.</td></tr>
+      <tr><td><code>ENGINE = InnoDB</code></td><td>De opslagmanier van MySQL die refererende sleutels ondersteunt.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Bovenaan en onderaan het script staan nog enkele regels <code>SET @OLD_…</code>. Die zetten tijdelijk een paar controles uit, zodat de tabellen in eender welke volgorde aangemaakt kunnen worden.</p>
+  <p>Het volledige script van ons voorbeeld vind je hier: <a href="downloads/festival_create.sql" download>festival_create.sql</a>. Gebruik het om te vergelijken.</p>
+
+  <h2>De databank controleren</h2>
+  <ol class="steps">
+    <li><p>Ga naar het startscherm (het huisje linksboven) en open de verbinding.</p></li>
+    <li><p>Klik in de <span class="ui">Navigator</span> bij <span class="ui">Schemas</span> op het icoon met de twee pijltjes (vernieuwen), of klik rechts in de lijst en kies <span class="ui">Refresh All</span>. De databank <code>festival</code> verschijnt.</p></li>
+    <li><p>Klap <code>festival</code> en daarna <span class="ui">Tables</span> open. We zien zeven tabellen.</p></li>
+    <li><p>We kunnen het ook met SQL nakijken. Open een query-tab (<kbd>Ctrl</kbd> + <kbd>T</kbd>), typ deze opdrachten en voer ze uit met <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd>:</p></li>
+  </ol>
+  <div class="code">
+<pre><code>SHOW TABLES FROM festival;
+DESCRIBE festival.artiest;</code></pre>
+  </div>
+  <p><code>DESCRIBE</code> toont de structuur van een tabel. Voor <code>artiest</code> krijgen we:</p>
+  <div class="table-wrap">
+  <table class="wb-grid" style="width:auto">
+    <thead><tr><th>Field</th><th>Type</th><th>Null</th><th>Key</th><th>Default</th><th>Extra</th></tr></thead>
+    <tbody>
+      <tr><td>artiestID</td><td>int</td><td>NO</td><td>PRI</td><td>NULL</td><td>auto_increment</td></tr>
+      <tr><td>naam</td><td>varchar(60)</td><td>NO</td><td></td><td>NULL</td><td></td></tr>
+      <tr><td>land</td><td>varchar(45)</td><td>NO</td><td></td><td>NULL</td><td></td></tr>
+      <tr><td>genreID</td><td>int</td><td>NO</td><td>MUL</td><td>NULL</td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small muted"><code>PRI</code> staat voor primaire sleutel. <code>MUL</code> betekent dat er een index op de kolom staat waarin dezelfde waarde meerdere keren mag voorkomen: zo herkennen we een RS.</p>
+
+  <h2>Model aangepast? Opnieuw naar de server</h2>
+  <p>Het script gebruikt <code>CREATE TABLE IF NOT EXISTS</code>. Bestaat een tabel al, dan slaat de server ze over. Een wijziging in ons model komt dus <b>niet</b> door als we Forward Engineer gewoon opnieuw uitvoeren. We hebben twee mogelijkheden:</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Methode</th><th>Hoe?</th><th>Gevolg</th></tr></thead>
+    <tbody>
+      <tr><td><b>Alles opnieuw</b> (eenvoudig)</td><td>Forward Engineer opnieuw, en bij Opties <span class="ui">Generate DROP Statements Before Each CREATE Statement</span> en <span class="ui">Generate DROP SCHEMA</span> aanvinken.</td><td>De databank wordt verwijderd en opnieuw gemaakt. <b>Alle gegevens zijn weg</b>: voer daarna het insert-script uit stap 7 opnieuw uit.</td></tr>
+      <tr><td><b>Synchroniseren</b></td><td><span class="menu-path">Database <span class="sep">›</span> Synchronize Model…</span> (<kbd>Ctrl</kbd> + <kbd>Y</kbd>). Workbench vergelijkt model en databank en toont welke wijzigingen het zal doorvoeren.</td><td>Enkel de verschillen worden aangepast; de gegevens blijven zoveel mogelijk behouden.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <aside class="note warn">
+    <p class="note-title">Let op met DROP</p>
+    <p><code>DROP SCHEMA</code> verwijdert de volledige databank met alle gegevens, zonder te vragen of we het zeker weten. Gebruik het enkel als we alle gegevens opnieuw kunnen invoeren met een script.</p>
+  </aside>
+
+  <h2>Foutmeldingen</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Melding</th><th>Oorzaak</th><th>Oplossing</th></tr></thead>
+    <tbody>
+      <tr><td>Workbench kan niet verbinden</td><td>De MySQL-server draait niet, of het wachtwoord klopt niet</td><td>Start de service MySQL80 (zie stap 3) en probeer opnieuw.</td></tr>
+      <tr><td><code>Error 1064</code>: <i>You have an error in your SQL syntax … near …</i></td><td>Vaak een tekst als standaardwaarde zonder aanhalingstekens (<code>nee</code> in plaats van <code>'nee'</code>) of een datatype zonder lengte (<code>VARCHAR</code>)</td><td>De melding toont het stukje script waar het misloopt (<i>near …</i>). Verbeter dat in het model.</td></tr>
+      <tr><td><code>Error 1067</code>: <i>Invalid default value for …</i></td><td>De standaardwaarde past niet bij het datatype, bijvoorbeeld een datum als <code>'09-07-2027'</code></td><td>Schrijf datums als <code>'2027-07-09'</code>, of laat de standaardwaarde leeg.</td></tr>
+      <tr><td><code>Error 3780</code>: <i>Referencing column … and referenced column … are incompatible</i></td><td>RS en PS hebben een ander datatype, bijvoorbeeld <code>INT</code> tegenover <code>INT UNSIGNED</code></td><td>Geef de RS exact hetzelfde datatype als de PS.</td></tr>
+      <tr><td>Geen fout, maar een wijziging is niet zichtbaar</td><td>De tabel bestond al (<code>IF NOT EXISTS</code>)</td><td>Gebruik een van de twee methodes hierboven.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap6">
+      <li><label><input type="checkbox"><span>Forward Engineer eindigde met groene vinkjes.</span></label></li>
+      <li><label><input type="checkbox"><span>In de Navigator zie ik de databank <code>festival</code> met zeven tabellen.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik kan uitleggen wat <code>PRIMARY KEY</code>, <code>INDEX</code> en <code>FOREIGN KEY … REFERENCES</code> in het script doen.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik weet hoe ik een aangepast model opnieuw naar de server breng.</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

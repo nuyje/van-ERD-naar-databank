@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Van ERD naar databank | Databeheer met MySQL Workbench</title>
+<meta name="description" content="Stap voor stap van een ERD naar een echte MySQL-databank met MySQL Workbench: model, forward engineer en gegevens invoeren met INSERT INTO.">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="1-erd-naar-ontwerp.html">Begin bij stap 1</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content wide">
+
+  <h1>Van ERD naar databank</h1>
+  <p class="lead">In de cursus Data-ontwerp leerden we een ERD tekenen. Nu gaan we een stap verder: we bouwen dat ontwerp om tot een echte databank op onze MySQL-server en vullen ze met gegevens. Alles doen we in MySQL Workbench.</p>
+
+  <div class="route-hero">
+    <section class="phase">
+      <h2><span class="tag">ERD</span> op papier</h2>
+      <p>Wat we al kennen: entiteiten, attributen en relaties.</p>
+      <div class="art"><img src="img/fase-erd.svg" width="310" height="140" alt="ERD: Artiest behoort tot Genre. Een genre heeft nul of meer artiesten, een artiest hoort bij precies één genre."></div>
+    </section>
+    <section class="phase">
+      <h2><span class="tag">Model</span> in Workbench</h2>
+      <p>We tekenen tabellen, kolommen en relaties in een EER-diagram.</p>
+      <div class="art"><img src="img/fase-model.svg" width="344" height="136" alt="EER-diagram in Workbench: tabel artiest krijgt een refererende sleutel genreID naar tabel genre."></div>
+    </section>
+    <section class="phase">
+      <h2><span class="tag">Databank</span> met gegevens</h2>
+      <p>Workbench maakt de databank aan; met een script vullen we ze op.</p>
+      <div class="art">
+        <table class="result-grid" aria-label="Voorbeeld van gegevens in de tabel artiest">
+          <thead><tr><th>artiestID</th><th>naam</th><th>genreID</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Neon Atlas</td><td>4</td></tr>
+            <tr><td>2</td><td>Sara Volt</td><td>1</td></tr>
+            <tr><td>3</td><td>De Kempense Kraaien</td><td>2</td></tr>
+            <tr><td>4</td><td>Lil Kwadraat</td><td>3</td></tr>
+            <tr><td>5</td><td>Juno &amp; The Waves</td><td>5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <figure class="goals" aria-label="Wat leren we?">
+    <div class="goals-head"><span class="tname">leerdoelen</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We implementeren een relationele databank op basis van een eigen ontwerp (leerplandoel 8).</li>
+      <li>We zetten een ERD om naar tabellen, primaire en refererende sleutels.</li>
+      <li>We bouwen een model in MySQL Workbench en zetten het met Forward Engineer om naar een databank.</li>
+      <li>We vullen de databank met een script vol <code>INSERT INTO</code>-opdrachten (leerplandoel 10).</li>
+      <li>We testen de referentiële integriteit en cascading delete (leerplandoel 7).</li>
+    </ul>
+  </figure>
+
+  <div class="content">
+  <h2>Wat hebben we nodig?</h2>
+  <ul>
+    <li><b>MySQL Server</b> (Community, versie 8) die draait op onze computer.</li>
+    <li><b>MySQL Workbench 8.0</b>, met een werkende verbinding naar die server.</li>
+    <li>Het <b>wachtwoord</b> van de gebruiker waarmee we verbinden (meestal <code>root</code>).</li>
+    <li>De cursus <b>Data-ontwerp</b>, vooral hoofdstuk 2 (het ERD) en hoofdstuk 3 (ERD omzetten naar databaseontwerp).</li>
+    <li>Een vaste map voor ons werk, bijvoorbeeld <code>Documenten\Databeheer</code>.</li>
+  </ul>
+
+  <h2>Zo werken we</h2>
+  <p>Elke stap begint met de leerdoelen, in een vak dat eruitziet als een tabel uit Workbench. Daarna volgen genummerde handelingen die we één voor één uitvoeren. Onderaan elke stap staat een lijst <b>Controle</b>: duid de vinkjes aan als alles klopt. De stap kleurt dan groen in het stappenplan.</p>
+
+  <aside class="note tip">
+    <p class="note-title">Tip: zet de site en Workbench naast elkaar</p>
+    <p>Druk in deze browser op <kbd>Windows</kbd> + <kbd>←</kbd> en kies Workbench voor de rechterhelft. Deze site past zich aan een smal venster aan; het stappenplan zit dan onder de knop <b>Stappen</b> bovenaan.</p>
+  </aside>
+
+  <aside class="note course">
+    <p class="note-title">Uit de cursus</p>
+    <p>De cursus beschrijft het ontwerp van een databank in zes stappen: analyse van de informatiebehoefte, domein en entiteiten bepalen, het datamodel (ERD) opstellen, het DBMS kiezen, het dataontwerp invoeren en tot slot de data invoeren. Op deze site doen we de laatste drie stappen. Ons DBMS is MySQL.</p>
+  </aside>
+
+  <h2>Het stappenplan</h2>
+  <ol class="overview">
+    <li><a href="1-erd-naar-ontwerp.html"><span class="nr">1</span><span><span class="t">Van ERD naar databaseontwerp</span><span class="d">De omzettingsregels, datatypes en onze naamgevingsafspraken.</span></span></a></li>
+    <li><a href="2-voorbeeld-festival.html"><span class="nr">2</span><span><span class="t">Ons voorbeeld: festival Zomerklanken</span><span class="d">Probleemstelling, ERD en het volledige databaseontwerp.</span></span></a></li>
+    <li><a href="3-nieuw-model.html"><span class="nr">3</span><span><span class="t">Een nieuw model in Workbench</span><span class="d">Workbench instellen, schema aanmaken, EER-diagram openen.</span></span></a></li>
+    <li><a href="4-tabellen.html"><span class="nr">4</span><span><span class="t">Tabellen en kolommen</span><span class="d">Tabellen plaatsen, kolommen, datatypes, PK, NN, UQ en AI.</span></span></a></li>
+    <li><a href="5-relaties.html"><span class="nr">5</span><span><span class="t">Relaties leggen</span><span class="d">1:n, optionele relaties en koppeltabellen met de n:m-tool.</span></span></a></li>
+    <li><a href="6-forward-engineer.html"><span class="nr">6</span><span><span class="t">Forward engineer</span><span class="d">Van model naar databank op de server, en het script lezen.</span></span></a></li>
+    <li><a href="7-gegevens-invoeren.html"><span class="nr">7</span><span><span class="t">Gegevens invoeren met INSERT INTO</span><span class="d">Een insert-script schrijven, uitvoeren en foutmeldingen oplossen.</span></span></a></li>
+    <li><a href="8-integriteit.html"><span class="nr">8</span><span><span class="t">Referentiële integriteit testen</span><span class="d">RESTRICT, CASCADE en SET NULL, en het model aanpassen.</span></span></a></li>
+    <li><a href="oefeningen.html"><span class="nr">O</span><span><span class="t">Oefeningen</span><span class="d">Zes oefeningen, van opwarmer tot een eigen ontwerp.</span></span></a></li>
+    <li><a href="spiekbrief.html"><span class="nr">?</span><span><span class="t">Spiekbrief</span><span class="d">Menu's, sneltoetsen, datatypes en foutcodes op één pagina.</span></span></a></li>
+  </ol>
+
+  <h2>Downloads bij het voorbeeld</h2>
+  <ul>
+    <li><a href="downloads/festival_create.sql" download>festival_create.sql</a>: de structuur van de databank, zoals Workbench ze genereert.</li>
+    <li><a href="downloads/festival_insert.sql" download>festival_insert.sql</a>: alle testgegevens van het festival.</li>
+  </ul>
+  <p class="small muted">Probeer eerst alles zelf te bouwen. Deze bestanden zijn bedoeld om te vergelijken of om opnieuw te beginnen.</p>
+
+  <p class="site-foot">Lesmateriaal Applicatie- en databeheer, 5e jaar. Gebaseerd op de cursus Data-ontwerp (VVKSO, Werkgroep Handel). Alle namen in de voorbeelddatabanken zijn fictief.</p>
+  </div>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

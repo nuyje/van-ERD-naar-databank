@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 1: Van ERD naar databaseontwerp | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 1 van 8</p>
+  <h1>Van ERD naar databaseontwerp</h1>
+  <p class="lead">Voor we Workbench openen, zetten we de regels uit de cursus nog eens op een rij. Een databaseontwerp beschrijft precies welke tabellen, kolommen en sleutels we nodig hebben, en welk soort gegevens in elke kolom komt.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_1</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We vertalen een ERD naar tabellen met primaire en refererende sleutels.</li>
+      <li>We kiezen voor elke kolom een passend datatype.</li>
+      <li>We kennen de kolomeigenschappen PK, NN, UQ en AI.</li>
+      <li>We kennen de naamgevingsafspraken die we in Workbench gebruiken.</li>
+    </ul>
+  </figure>
+
+  <h2>De omzettingsregels</h2>
+  <p>In hoofdstuk 3 van de cursus zetten we een ERD om naar een databaseontwerp. In Workbench passen we exact dezelfde regels toe; alleen het gereedschap is nieuw. De laatste kolom toont welk gereedschap we in de volgende stappen gebruiken.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>In het ERD</th><th>In het databaseontwerp</th><th>In Workbench</th></tr></thead>
+    <tbody>
+      <tr><td>Entiteit</td><td>Tabel</td><td><span class="ui">Place a New Table</span></td></tr>
+      <tr><td>Attribuut</td><td>Kolom (veld)</td><td>Een rij in de tabeleditor</td></tr>
+      <tr><td>Identificerend attribuut (vet)</td><td>Primaire sleutel (PS)</td><td>Vinkje <span class="pk">PK</span></td></tr>
+      <tr><td>1:1-relatie zonder attributen</td><td>PS van de ene tabel als refererende sleutel (RS) in de andere</td><td>1:1-relatie, en <b>UQ</b> op de RS</td></tr>
+      <tr><td>1:n-relatie zonder attributen</td><td>PS van de één-kant als RS in de veel-kant</td><td>1:n-relatie</td></tr>
+      <tr><td>m:n-relatie zonder attributen</td><td>Extra tabel met beide PS'en, samen de PS van die tabel</td><td>n:m-relatie (maakt de extra tabel zelf)</td></tr>
+      <tr><td>Relatie met attributen</td><td>Extra tabel met de PS'en als RS, plus de attributen</td><td>Eigen tabel + twee 1:n-relaties</td></tr>
+      <tr><td>Optionaliteit nul (cirkeltje) bij de één-kant</td><td>RS mag leeg blijven (NULL)</td><td><b>Mandatory</b> uitvinken, <span class="nn">NN</span> uit</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <aside class="note course">
+    <p class="note-title">Uit de cursus</p>
+    <p>Hoofdstuk 3 (p. 23–30) werkt elke regel uit met voorbeelden: werknemer en bureautafel, man en vrouw, persoon en cursus. Het overzicht in 3.5 is een handige samenvatting om naast je te leggen.</p>
+  </aside>
+
+  <h3>De symbolen</h3>
+  <p>Goed nieuws: Workbench tekent relaties met dezelfde kraaienpootnotatie als onze cursus. Het symbool tegen een tabel zegt hoeveel rijen van díe tabel bij één rij van de andere tabel horen.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Symbool</th><th>Betekenis</th><th>Minimum en maximum</th></tr></thead>
+    <tbody>
+      <tr><td><img class="sym" src="img/symbool-een.svg" alt="twee strepen"></td><td>precies één</td><td>minstens 1, hoogstens 1</td></tr>
+      <tr><td><img class="sym" src="img/symbool-nul-een.svg" alt="cirkel en streep"></td><td>nul of één</td><td>minstens 0, hoogstens 1</td></tr>
+      <tr><td><img class="sym" src="img/symbool-veel.svg" alt="streep en kraaienpoot"></td><td>één of veel</td><td>minstens 1, hoogstens veel</td></tr>
+      <tr><td><img class="sym" src="img/symbool-nul-veel.svg" alt="cirkel en kraaienpoot"></td><td>nul of veel</td><td>minstens 0, hoogstens veel</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Het teken het dichtst bij de tabel is de <b>cardinaliteit</b> (maximum: één of veel), het teken daarnaast de <b>optionaliteit</b> (minimum: nul of één).</p>
+
+  <h2>Sleutels: primair, refererend en surrogaat</h2>
+  <p>Elke tabel krijgt een <span class="pk">primaire sleutel</span>: een kolom die elke rij uniek maakt en nooit leeg is. Net als in de cursus (1.1.2) kiezen we bijna altijd een <b>surrogaatsleutel</b>: een extra kolom zoals <code>artiestID</code> die enkel dient om de rij te herkennen. In MySQL maken we daar een geheel getal van met <b>AUTO_INCREMENT</b>, zodat de server zelf 1, 2, 3 … nummert.</p>
+  <p>Een <span class="fk">refererende sleutel</span> is een kolom die verwijst naar de PS van een andere tabel. Zo legt de databank het verband tussen de tabellen. De server controleert dat elke waarde in een RS echt bestaat in de andere tabel: dat heet <b>referentiële integriteit</b>. In stap 8 testen we dat.</p>
+
+  <aside class="note tip">
+    <p class="note-title">Extra tabel: welke primaire sleutel?</p>
+    <p>Bij een relatie met attributen vragen we ons af of de combinatie van de twee RS'en altijd uniek is. Een team schrijft maar één keer in voor hetzelfde toernooi: dan is <code>(teamID, toernooiID)</code> een goede samengestelde PS. Kan dezelfde combinatie meerdere keren voorkomen (een artiest speelt twee keer op hetzelfde podium), dan geven we de tabel een eigen surrogaatsleutel. Zie ook cursus 3.3.3.</p>
+  </aside>
+
+  <h2>Datatypes kiezen</h2>
+  <p>Voor elke kolom vertellen we de server wat voor gegevens erin komen. Een goede keuze voorkomt fouten: in een kolom van het type <code>DATE</code> kan niemand per ongeluk "volgende week" typen.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Datatype</th><th>Gebruiken voor</th><th>Voorbeeldwaarde</th></tr></thead>
+    <tbody>
+      <tr><td><code>INT</code></td><td>Gehele getallen: ID's, aantallen, capaciteit</td><td><code>25000</code></td></tr>
+      <tr><td><code>DECIMAL(p,s)</code></td><td>Bedragen en exacte kommagetallen. <i>p</i> = aantal cijfers in totaal, <i>s</i> = cijfers na de komma</td><td><code>DECIMAL(6,2)</code>: <code>1234.56</code></td></tr>
+      <tr><td><code>VARCHAR(n)</code></td><td>Tekst van hoogstens <i>n</i> tekens: namen, e-mailadressen</td><td><code>'Neon Atlas'</code></td></tr>
+      <tr><td><code>CHAR(n)</code></td><td>Tekst met altijd precies <i>n</i> tekens</td><td>postcode <code>CHAR(4)</code>: <code>'2300'</code></td></tr>
+      <tr><td><code>TEXT</code></td><td>Lange tekst: beschrijving, verslag</td><td><code>'Twee speurders …'</code></td></tr>
+      <tr><td><code>DATE</code></td><td>Datum</td><td><code>'2027-07-09'</code></td></tr>
+      <tr><td><code>TIME</code></td><td>Tijdstip of duur</td><td><code>'21:30:00'</code></td></tr>
+      <tr><td><code>DATETIME</code></td><td>Datum en tijd samen</td><td><code>'2026-10-05 17:35:00'</code></td></tr>
+      <tr><td><code>YEAR</code></td><td>Een jaartal</td><td><code>2024</code></td></tr>
+      <tr><td><code>TINYINT(1)</code></td><td>Ja of nee (MySQL schrijft <code>BOOLEAN</code> zo weg): 1 = ja, 0 = nee</td><td><code>1</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <aside class="note tip">
+    <p class="note-title">Rekenen we ermee?</p>
+    <p>Een telefoonnummer, postcode of rekeningnummer bestaat uit cijfers, maar we rekenen er nooit mee. Bovendien verdwijnt de nul vooraan in een getal: <code>0470</code> wordt <code>470</code>. Zulke gegevens bewaren we dus als tekst (<code>VARCHAR</code> of <code>CHAR</code>).</p>
+  </aside>
+  <aside class="note warn">
+    <p class="note-title">Let op</p>
+    <p>Bedragen bewaren we nooit als <code>FLOAT</code> of <code>DOUBLE</code>: die types rekenen niet exact. Gebruik <code>DECIMAL</code>. En kies de lengte van <code>VARCHAR</code> bewust: Workbench stelt <code>VARCHAR(45)</code> voor, maar een e-mailadres of beschrijving past daar vaak niet in.</p>
+  </aside>
+
+  <h2>Kolomeigenschappen</h2>
+  <p>In de tabeleditor van Workbench staat naast elke kolom een reeks vinkjes. Deze vier gebruiken we het meest:</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Vinkje</th><th>Voluit</th><th>Betekenis</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pk">PK</span></td><td>Primary Key</td><td>Deze kolom is (een deel van) de primaire sleutel.</td></tr>
+      <tr><td><span class="nn">NN</span></td><td>Not Null</td><td>De kolom moet altijd ingevuld zijn.</td></tr>
+      <tr><td><b>UQ</b></td><td>Unique</td><td>Twee rijen mogen niet dezelfde waarde hebben (bv. e-mailadres).</td></tr>
+      <tr><td><b>AI</b></td><td>Auto Increment</td><td>De server nummert zelf: 1, 2, 3 … Enkel voor een PS van het type <code>INT</code>.</td></tr>
+      <tr><td><b>UN</b></td><td>Unsigned</td><td>Geen negatieve getallen. Handig, maar gebruik het dan ook in de bijhorende RS.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Daarnaast kunnen we een <b>standaardwaarde</b> (<span class="ui">Default/Expression</span>) invullen. Die gebruikt de server als we bij het invoeren niets opgeven. De vinkjes <b>B</b>, <b>ZF</b> en <b>G</b> hebben we niet nodig.</p>
+
+  <h2>Onze naamgevingsafspraken</h2>
+  <p>Vaste afspraken maken ons werk leesbaar voor iedereen in de klas, en ze zorgen dat de testscripts bij de oefeningen werken.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Wat</th><th>Afspraak</th><th>Voorbeeld</th></tr></thead>
+    <tbody>
+      <tr><td>Databank (schema)</td><td>Kleine letters, geen spaties</td><td><code>festival</code></td></tr>
+      <tr><td>Tabel</td><td>Kleine letters, enkelvoud, zonder <code>tbl</code></td><td><code>artiest</code>, <code>optreden</code></td></tr>
+      <tr><td>Kolom</td><td>Begint met een kleine letter, elk nieuw woord met een hoofdletter</td><td><code>geboortedatum</code>, <code>maxTenten</code></td></tr>
+      <tr><td>Primaire sleutel</td><td>Tabelnaam + <code>ID</code></td><td><code>artiestID</code></td></tr>
+      <tr><td>Refererende sleutel</td><td>Dezelfde naam als de PS waarnaar ze verwijst</td><td><code>genreID</code> in <code>artiest</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Gebruik nooit spaties, accenten of leestekens in namen. Verwijst een tabel twee keer naar dezelfde tabel, dan kiezen we beschrijvende namen, zoals <code>thuisclubID</code> en <code>uitclubID</code>.</p>
+
+  <aside class="note course">
+    <p class="note-title">Waarom geen tblArtiest zoals in de cursus?</p>
+    <p>MySQL op Windows bewaart tabelnamen standaard in kleine letters: <code>tblArtiest</code> wordt op de server <code>tblartiest</code>. Daarom schrijven we tabelnamen meteen in kleine letters, en laten we het voorvoegsel <code>tbl</code> weg. Of iets een tabel is, zien we in Workbench toch aan het icoon.</p>
+  </aside>
+
+  <h2>Even oefenen</h2>
+  <p>Probeer eerst zelf te antwoorden voor je de oplossing openklikt.</p>
+  <ol>
+    <li>In een ERD zit een leerling in precies één klas, en een klas heeft veel leerlingen. Welke tabel krijgt een refererende sleutel, en hoe heet die?</li>
+    <li>Een leerling volgt veel vakken, een vak wordt door veel leerlingen gevolgd. Per leerling en vak bewaren we het eindcijfer. Welke tabellen maken we?</li>
+    <li>Welk datatype kiezen we voor: de prijs van een ticket, een gsm-nummer, het aantal deelnemers, een geboortedatum, een recensie van 2000 tekens?</li>
+  </ol>
+  <details>
+    <summary>Toon de oplossingen</summary>
+    <div class="details-body">
+      <ol>
+        <li>De tabel aan de veel-kant: <code>leerling</code> krijgt de RS <code>klasID</code>.</li>
+        <li>Drie tabellen: <code>leerling</code>, <code>vak</code> en een extra tabel, bijvoorbeeld <code>resultaat(leerlingID, vakID, eindcijfer)</code>. Een leerling heeft per vak één eindcijfer, dus <code>(leerlingID, vakID)</code> kan de samengestelde PS zijn.</li>
+        <li><code>DECIMAL(6,2)</code>, <code>VARCHAR(20)</code>, <code>INT</code>, <code>DATE</code>, <code>TEXT</code>.</li>
+      </ol>
+    </div>
+  </details>
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap1">
+      <li><label><input type="checkbox"><span>Ik kan uitleggen hoe een 1:n-relatie en een m:n-relatie omgezet worden.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik weet wanneer een extra tabel een eigen surrogaatsleutel nodig heeft.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik kies <code>DECIMAL</code> voor bedragen en tekst voor telefoonnummers en postcodes.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik ken de naamgevingsafspraken.</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

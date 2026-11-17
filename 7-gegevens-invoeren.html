@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 7: Gegevens invoeren met INSERT INTO | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 7 van 8</p>
+  <h1>Gegevens invoeren met INSERT INTO</h1>
+  <p class="lead">Een lege databank is niet erg nuttig. We schrijven een SQL-script dat de tabellen vult met testgegevens. Zo'n script bewaren we, zodat we het altijd opnieuw kunnen uitvoeren.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_7</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We schrijven een script dat alle tabellen van festival vult met <code>INSERT INTO</code>.</li>
+      <li>We noteren tekst, getallen, datums, tijden, ja/nee en lege waarden correct.</li>
+      <li>We voeren gegevens in de juiste volgorde in: eerst de ouders, dan de kinderen.</li>
+      <li>We lezen foutmeldingen en lossen ze op.</li>
+    </ul>
+  </figure>
+
+  <h2>Een query-tab openen</h2>
+  <ol class="steps">
+    <li><p>Open de verbinding vanuit het startscherm van Workbench.</p></li>
+    <li><p>Kies <span class="menu-path">File <span class="sep">›</span> New Query Tab</span> (<kbd>Ctrl</kbd> + <kbd>T</kbd>).</p></li>
+    <li><p>Laat het script beginnen met <code>USE festival;</code>. Zo weet de server in welke databank de tabellen staan. (Dubbelklikken op <code>festival</code> in de Navigator doet hetzelfde: de naam wordt dan vet.)</p></li>
+    <li><p>Bewaar het script meteen: <span class="menu-path">File <span class="sep">›</span> Save Script As…</span> als <code>festival_insert.sql</code> in je map <code>Databeheer</code>.</p></li>
+  </ol>
+
+  <h2>De opbouw van INSERT INTO</h2>
+  <p>Eén rij toevoegen aan de tabel <code>genre</code>:</p>
+  <div class="code">
+<pre><code>INSERT INTO genre (genreID, naam)
+VALUES (1, 'Pop');</code></pre>
+  </div>
+  <ul>
+    <li>Na <code>INSERT INTO</code> komt de naam van de tabel.</li>
+    <li>Tussen haakjes volgen de kolommen die we invullen.</li>
+    <li>Na <code>VALUES</code> volgen de waarden, <b>in dezelfde volgorde</b> als de kolommen.</li>
+    <li>Elke opdracht eindigt met een puntkomma <code>;</code>.</li>
+  </ul>
+  <p>Meerdere rijen tegelijk? Zet ze achter elkaar, gescheiden door komma's:</p>
+  <div class="code">
+<pre><code>INSERT INTO genre (genreID, naam) VALUES
+(1, 'Pop'),
+(2, 'Rock'),
+(3, 'Hiphop');</code></pre>
+  </div>
+
+  <h3>Hoe schrijven we waarden?</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Soort waarde</th><th>Schrijfwijze</th><th>Voorbeeld</th></tr></thead>
+    <tbody>
+      <tr><td>Tekst</td><td>Tussen enkele aanhalingstekens</td><td><code>'Neon Atlas'</code></td></tr>
+      <tr><td>Apostrof in een tekst</td><td>Schrijf de apostrof dubbel</td><td><code>'D''Hondt'</code></td></tr>
+      <tr><td>Geheel getal</td><td>Zonder aanhalingstekens</td><td><code>25000</code></td></tr>
+      <tr><td>Kommagetal</td><td>Met een <b>punt</b>, niet met een komma</td><td><code>1.5</code></td></tr>
+      <tr><td>Datum</td><td><code>'JJJJ-MM-DD'</code></td><td><code>'2027-07-09'</code></td></tr>
+      <tr><td>Tijd</td><td><code>'UU:MM:SS'</code></td><td><code>'21:30:00'</code></td></tr>
+      <tr><td>Datum en tijd</td><td><code>'JJJJ-MM-DD UU:MM:SS'</code></td><td><code>'2026-10-05 17:35:00'</code></td></tr>
+      <tr><td>Ja of nee</td><td><code>1</code> of <code>0</code></td><td><code>1</code></td></tr>
+      <tr><td>Leeg</td><td><code>NULL</code>, zonder aanhalingstekens</td><td><code>NULL</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <aside class="note warn">
+    <p class="note-title">NULL of 'NULL'?</p>
+    <p><code>NULL</code> betekent: geen waarde. <code>'NULL'</code> tussen aanhalingstekens is gewoon een tekst van vier letters. In een kolom van het type <code>INT</code> geeft dat een fout.</p>
+  </aside>
+
+  <h3>AUTO_INCREMENT: zelf een ID geven of niet?</h3>
+  <p>Omdat de PS-kolommen AUTO_INCREMENT hebben, mogen we het ID weglaten. De server kiest dan zelf het volgende nummer:</p>
+  <div class="code">
+<pre><code>INSERT INTO podium (naam, capaciteit, overdekt)
+VALUES ('Silent Disco', 800, 1);</code></pre>
+  </div>
+  <p>In een testscript geven we de ID's meestal wél zelf. Dan weten we zeker dat genre 4 'Dance' is, en kunnen we in de tabel <code>artiest</code> naar <code>genreID</code> 4 verwijzen. Lukt een INSERT niet, dan kan de server een nummer overslaan. Zo'n gat in de nummering is normaal.</p>
+  <p>Laten we een kolom met een standaardwaarde weg, dan vult de server die in. Bij <code>podium</code> wordt <code>overdekt</code> dan <code>0</code>.</p>
+
+  <h2>De volgorde: eerst ouders, dan kinderen</h2>
+  <p>In <code>artiest</code> staat de RS <code>genreID</code>. De server aanvaardt een artiest met <code>genreID</code> 4 enkel als genre 4 al bestaat. Daarom vullen we de tabellen in deze volgorde:</p>
+  <ol class="steps">
+    <li><p><b>Tabellen zonder RS:</b> <code>genre</code>, <code>podium</code>, <code>campingzone</code>.</p></li>
+    <li><p><b>Tabellen die naar die ouders verwijzen:</b> <code>artiest</code> (naar genre) en <code>bezoeker</code> (naar campingzone).</p></li>
+    <li><p><b>Koppeltabellen:</b> <code>optreden</code> (naar artiest en podium) en <code>favoriet</code> (naar bezoeker en artiest).</p></li>
+  </ol>
+  <p>Kijk in het EER-diagram: een tabel komt pas aan de beurt als alle tabellen aan de één-kant van haar relaties al gevuld zijn.</p>
+
+  <h2>Het volledige script</h2>
+  <p>Typ dit script over of kopieer het. Lees vooral de commentaarregels die met <code>--</code> beginnen: de server slaat ze over, maar ze leggen uit wat er gebeurt.</p>
+  <div class="code" data-file="festival_insert.sql" data-download="downloads/festival_insert.sql">
+<pre><code>-- =====================================================
+-- Festival Zomerklanken - testgegevens
+-- Alle namen en e-mailadressen zijn fictief.
+--
+-- Volgorde is belangrijk: eerst de tabellen zonder
+-- refererende sleutels ("ouders"), daarna de tabellen
+-- die ernaar verwijzen ("kinderen").
+-- =====================================================
+
+USE festival;
+
+-- -----------------------------------------------------
+-- 1. Ouder-tabellen (geen refererende sleutels)
+-- -----------------------------------------------------
+
+INSERT INTO genre (genreID, naam) VALUES
+(1, 'Pop'),
+(2, 'Rock'),
+(3, 'Hiphop'),
+(4, 'Dance'),
+(5, 'Indie'),
+(6, 'Metal');      -- nog geen artiesten in dit genre: dat mag!
+
+INSERT INTO podium (podiumID, naam, capaciteit, overdekt) VALUES
+(1, 'Hoofdpodium', 25000, 0),
+(2, 'De Schuur', 6000, 1),
+(3, 'Club Lantaarn', 2500, 1),
+(4, 'Het Bos', 1500, 0);
+
+INSERT INTO campingzone (campingzoneID, naam, maxTenten) VALUES
+(1, 'Groen', 800),
+(2, 'Rustig', 300),
+(3, 'Comfort', 150);
+
+-- -----------------------------------------------------
+-- 2. Tabellen die naar de ouders verwijzen
+-- -----------------------------------------------------
+
+-- genreID moet bestaan in de tabel genre
+INSERT INTO artiest (artiestID, naam, land, genreID) VALUES
+(1, 'Neon Atlas', 'België', 4),
+(2, 'Sara Volt', 'Nederland', 1),
+(3, 'De Kempense Kraaien', 'België', 2),
+(4, 'Lil Kwadraat', 'België', 3),
+(5, 'Juno &amp; The Waves', 'Verenigd Koninkrijk', 5),
+(6, 'Bass Brigade', 'Duitsland', 4),
+(7, 'Mira Lune', 'Frankrijk', 1),
+(8, 'Rookmelder', 'België', 2),
+(9, 'Yasmine K', 'België', 3),
+(10, 'Polar Static', 'Noorwegen', 5),
+(11, 'Tropicana Tapes', 'Spanje', 4),
+(12, 'Kid Kompas', 'Nederland', 3);   -- geannuleerd: geen optredens
+
+-- campingzoneID mag NULL zijn: niet elke bezoeker kampeert
+-- Let op D''Hondt: een apostrof in een tekst schrijven we dubbel.
+INSERT INTO bezoeker (bezoekerID, voornaam, familienaam, email, geboortedatum, campingzoneID) VALUES
+(1, 'Lotte', 'Peeters', 'lotte.peeters@example.com', '2007-03-14', 1),
+(2, 'Jonas', 'Janssens', 'jonas.janssens@example.com', '2006-11-02', 1),
+(3, 'Emma', 'Maes', 'emma.maes@example.com', '2008-05-21', NULL),
+(4, 'Noah', 'Jacobs', 'noah.jacobs@example.com', '2005-08-30', 2),
+(5, 'Zoë', 'Hermans', 'zoe.hermans@example.com', '2007-01-09', 1),
+(6, 'Arthur', 'Willems', 'arthur.willems@example.com', '2006-06-17', NULL),
+(7, 'Nora', 'Claes', 'nora.claes@example.com', '2008-02-28', 3),
+(8, 'Mohamed', 'El Amrani', 'mohamed.elamrani@example.com', '2006-09-05', 1),
+(9, 'Sofie', 'D''Hondt', 'sofie.dhondt@example.com', '2005-12-12', 2),
+(10, 'Finn', 'Vermeulen', 'finn.vermeulen@example.com', '2007-07-23', NULL),
+(11, 'Amélie', 'Dubois', 'amelie.dubois@example.com', '2006-04-03', 3),
+(12, 'Milan', 'Van den Broeck', 'milan.vandenbroeck@example.com', '2008-10-19', 1),
+(13, 'Yara', 'Pauwels', 'yara.pauwels@example.com', '2007-09-27', NULL),
+(14, 'Lucas', 'Goossens', 'lucas.goossens@example.com', '2005-01-31', 2),
+(15, 'Elena', 'Wouters', 'elena.wouters@example.com', '2006-03-08', 3);
+
+-- -----------------------------------------------------
+-- 3. Koppeltabellen (verwijzen naar twee ouders)
+-- -----------------------------------------------------
+
+-- Datum: 'JJJJ-MM-DD'   Tijd: 'UU:MM:SS'
+INSERT INTO optreden (optredenID, datum, beginuur, einduur, artiestID, podiumID) VALUES
+(1, '2027-07-09', '18:00:00', '19:00:00', 8, 4),
+(2, '2027-07-09', '19:30:00', '20:30:00', 2, 1),
+(3, '2027-07-09', '20:00:00', '21:00:00', 9, 2),
+(4, '2027-07-09', '21:30:00', '23:00:00', 1, 1),
+(5, '2027-07-09', '22:00:00', '23:30:00', 11, 3),
+(6, '2027-07-10', '15:00:00', '16:00:00', 10, 4),
+(7, '2027-07-10', '17:00:00', '18:00:00', 5, 2),
+(8, '2027-07-10', '18:30:00', '19:30:00', 4, 1),
+(9, '2027-07-10', '20:00:00', '21:15:00', 7, 1),
+(10, '2027-07-10', '21:00:00', '22:30:00', 6, 3),
+(11, '2027-07-10', '22:00:00', '23:30:00', 3, 1),
+(12, '2027-07-11', '14:00:00', '15:00:00', 8, 2),
+(13, '2027-07-11', '16:00:00', '17:00:00', 9, 1),
+(14, '2027-07-11', '17:30:00', '18:30:00', 5, 4),
+(15, '2027-07-11', '19:00:00', '20:30:00', 6, 2),
+(16, '2027-07-11', '21:00:00', '23:00:00', 1, 1);   -- Neon Atlas speelt 2x op het Hoofdpodium
+
+INSERT INTO favoriet (bezoekerID, artiestID) VALUES
+(1, 1), (1, 2), (1, 7),
+(2, 4), (2, 9), (2, 12),
+(3, 2), (3, 5),
+(4, 3), (4, 8), (4, 12),
+(5, 1), (5, 6), (5, 11),
+(6, 3),
+(7, 5), (7, 10),
+(8, 4), (8, 9),
+(9, 2), (9, 7),
+(10, 1), (10, 12),
+(11, 7),
+(12, 1), (12, 6),
+(14, 8),
+(15, 2), (15, 5), (15, 10);
+
+-- -----------------------------------------------------
+-- 4. Controle: tel het aantal rijen per tabel
+-- -----------------------------------------------------
+SELECT 'genre' AS tabel, COUNT(*) AS aantal FROM genre
+UNION ALL SELECT 'podium', COUNT(*) FROM podium
+UNION ALL SELECT 'campingzone', COUNT(*) FROM campingzone
+UNION ALL SELECT 'artiest', COUNT(*) FROM artiest
+UNION ALL SELECT 'bezoeker', COUNT(*) FROM bezoeker
+UNION ALL SELECT 'optreden', COUNT(*) FROM optreden
+UNION ALL SELECT 'favoriet', COUNT(*) FROM favoriet;
+-- Verwacht: 6 - 4 - 3 - 12 - 15 - 16 - 30</code></pre>
+  </div>
+
+  <h2>Uitvoeren en controleren</h2>
+  <ol class="steps">
+    <li><p>Voer het hele script uit met het bliksem-icoon of met <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd>. Eén opdracht uitvoeren (die waar de cursor in staat) gaat met <kbd>Ctrl</kbd> + <kbd>Enter</kbd>.</p></li>
+    <li><p>Bekijk onderaan het paneel <span class="ui">Output</span>. Per opdracht staat er een regel met een groen vinkje en het aantal toegevoegde rijen.</p></li>
+    <li><p>De laatste opdracht van het script telt de rijen per tabel. Verwacht: 6, 4, 3, 12, 15, 16 en 30.</p></li>
+    <li><p>Bekijk de gegevens van een tabel: klik in de Navigator met de rechtermuisknop op de tabel en kies <span class="ui">Select Rows - Limit 1000</span>, of typ <code>SELECT * FROM artiest;</code></p></li>
+  </ol>
+
+  <div class="wb" role="img" aria-label="Vereenvoudigde weergave van het paneel Output met geslaagde en mislukte opdrachten">
+    <div class="wb-title"><span>Output: Action Output</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-body">
+      <table class="wb-grid wb-out">
+        <thead><tr><th></th><th>#</th><th>Action</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td class="ok"></td><td>1</td><td>USE festival</td><td>0 row(s) affected</td></tr>
+          <tr><td class="ok"></td><td>2</td><td>INSERT INTO genre (genreID, naam) VALUES (1, 'Pop'), …</td><td>6 row(s) affected Records: 6 Duplicates: 0 Warnings: 0</td></tr>
+          <tr><td class="ok"></td><td>3</td><td>INSERT INTO podium (podiumID, naam, capaciteit, overdekt) …</td><td>4 row(s) affected Records: 4 Duplicates: 0 Warnings: 0</td></tr>
+          <tr><td class="err"></td><td>4</td><td>INSERT INTO artiest (artiestID, naam, land, genreID) …</td><td>Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails …</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p>In dit voorbeeld liep de vierde opdracht mis: er werd naar een genre verwezen dat niet bestaat. Workbench stopt bij de eerste fout. De opdrachten <b>vóór</b> de fout zijn wel uitgevoerd.</p>
+
+  <h2>Foutmeldingen lezen</h2>
+  <p>Elke fout heeft een nummer en een Engelse uitleg. De uitleg noemt bijna altijd de tabel of kolom waar het misloopt.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Code</th><th>Melding</th><th>Oorzaak en oplossing</th></tr></thead>
+    <tbody>
+      <tr><td>1062</td><td><i>Duplicate entry '1' for key 'genre.PRIMARY'</i></td><td>Die PS bestaat al. Meestal hebben we het script een tweede keer uitgevoerd. Maak de tabellen eerst leeg (zie verder).</td></tr>
+      <tr><td>1062</td><td><i>Duplicate entry 'Pop' for key 'genre.naam_UNIQUE'</i></td><td>Een kolom met UQ krijgt een waarde die al bestaat.</td></tr>
+      <tr><td>1452</td><td><i>Cannot add or update a child row: a foreign key constraint fails …</i></td><td>De RS verwijst naar een rij die niet bestaat. Klopt het nummer? Staan de ouders hoger in het script?</td></tr>
+      <tr><td>1048</td><td><i>Column 'land' cannot be null</i></td><td>Een verplichte kolom (NN) krijgt <code>NULL</code>.</td></tr>
+      <tr><td>1364</td><td><i>Field 'genreID' doesn't have a default value</i></td><td>Een verplichte kolom ontbreekt in de kolomlijst.</td></tr>
+      <tr><td>1136</td><td><i>Column count doesn't match value count at row 1</i></td><td>Het aantal waarden verschilt van het aantal kolommen.</td></tr>
+      <tr><td>1406</td><td><i>Data too long for column 'naam' at row 1</i></td><td>De tekst is langer dan de <code>VARCHAR</code> toelaat. Maak de kolom langer in het model of kort de tekst in.</td></tr>
+      <tr><td>1292</td><td><i>Incorrect date value: '09-07-2027' for column 'datum' …</i></td><td>Datum in de verkeerde volgorde. Schrijf <code>'2027-07-09'</code>.</td></tr>
+      <tr><td>1366</td><td><i>Incorrect integer value: 'veel' for column 'capaciteit' …</i></td><td>Tekst in een kolom voor getallen.</td></tr>
+      <tr><td>1064</td><td><i>You have an error in your SQL syntax … near 'Hondt', …</i></td><td>Schrijffout: een apostrof die niet verdubbeld is, een vergeten komma, haakje of aanhalingsteken. Kijk net vóór het stukje na <i>near</i>.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Opnieuw beginnen</h3>
+  <p>Liep het script half mis en willen we het opnieuw uitvoeren? Dan geven de rijen die al bestaan fout 1062. Tijdens het testen zetten we daarom dit blok bovenaan het script. Het maakt alle tabellen leeg en zet de nummering terug op 1.</p>
+  <div class="code" data-file="reset-blok">
+<pre><code>-- Alle tabellen leegmaken (enkel tijdens het testen!)
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE favoriet;
+TRUNCATE TABLE optreden;
+TRUNCATE TABLE bezoeker;
+TRUNCATE TABLE artiest;
+TRUNCATE TABLE campingzone;
+TRUNCATE TABLE podium;
+TRUNCATE TABLE genre;
+SET FOREIGN_KEY_CHECKS = 1;</code></pre>
+  </div>
+  <aside class="note warn">
+    <p class="note-title">Let op</p>
+    <p><code>SET FOREIGN_KEY_CHECKS = 0</code> zet de controle op refererende sleutels tijdelijk uit, zodat we de tabellen in eender welke volgorde kunnen leegmaken. Zet ze altijd meteen terug aan met <code>= 1</code>.</p>
+  </aside>
+
+  <h2>Zelf aan de slag</h2>
+  <ol>
+    <li>Voeg jezelf toe als bezoeker, <b>zonder</b> een <code>bezoekerID</code> op te geven. Je kampeert in zone Rustig.</li>
+    <li>Duid drie artiesten aan als jouw favoriet. Zoek eerst op welk <code>bezoekerID</code> je kreeg.</li>
+    <li>Voeg het genre Reggae toe, een artiest uit dat genre en een optreden van die artiest op zondag in Het Bos.</li>
+    <li>Probeer bewust een fout: een optreden voor artiest 99. Welke foutcode krijg je, en waarom?</li>
+  </ol>
+  <details>
+    <summary>Toon een mogelijke oplossing</summary>
+    <div class="details-body">
+      <div class="code">
+<pre><code>-- 1. Jezelf toevoegen (zone Rustig = campingzoneID 2)
+INSERT INTO bezoeker (voornaam, familienaam, email, geboortedatum, campingzoneID)
+VALUES ('Sam', 'Peeters', 'sam.peeters@example.com', '2008-06-01', 2);
+
+-- 2. Welk ID kreeg ik?
+SELECT bezoekerID FROM bezoeker WHERE email = 'sam.peeters@example.com';
+-- stel dat het 16 is:
+INSERT INTO favoriet (bezoekerID, artiestID) VALUES (16, 1), (16, 5), (16, 9);
+
+-- 3. Reggae, een artiest en een optreden
+INSERT INTO genre (naam) VALUES ('Reggae');            -- krijgt genreID 7
+INSERT INTO artiest (naam, land, genreID) VALUES ('Island Breeze', 'Jamaica', 7);  -- artiestID 13
+INSERT INTO optreden (datum, beginuur, einduur, artiestID, podiumID)
+VALUES ('2027-07-11', '13:00:00', '14:00:00', 13, 4);
+
+-- 4. Bewuste fout: artiest 99 bestaat niet
+INSERT INTO optreden (datum, beginuur, einduur, artiestID, podiumID)
+VALUES ('2027-07-11', '15:00:00', '16:00:00', 99, 1);
+-- Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails</code></pre>
+      </div>
+      <p>De nummers 16, 7 en 13 kloppen enkel als je het festivalscript precies één keer foutloos uitvoerde. Kijk ze dus altijd na met <code>SELECT</code>.</p>
+    </div>
+  </details>
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap7">
+      <li><label><input type="checkbox"><span>Mijn script <code>festival_insert.sql</code> is bewaard en loopt zonder rode kruisjes.</span></label></li>
+      <li><label><input type="checkbox"><span>De telling geeft 6, 4, 3, 12, 15, 16 en 30 rijen.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik schrijf datums als <code>'JJJJ-MM-DD'</code> en kommagetallen met een punt.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik kan uitleggen waarom <code>genre</code> vóór <code>artiest</code> gevuld moet worden.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb de vier opdrachten van <i>Zelf aan de slag</i> gemaakt.</span></label></li>
+    </ul>
+  </aside>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stap 8: Referentiële integriteit testen | Van ERD naar databank</title>
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#inhoud">Naar de inhoud</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-title">Van ERD naar databank</span><span class="brand-sub">Databeheer met MySQL Workbench</span></a>
+  <span class="spacer"></span>
+  <a class="toplink" href="oefeningen.html">Oefeningen</a>
+  <a class="toplink" href="spiekbrief.html">Spiekbrief</a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="stappen">Stappen</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="stappen" aria-label="Stappenplan"><noscript><p><a href="index.html">Naar het overzicht</a></p></noscript></nav>
+
+<main id="inhoud">
+<div class="content">
+
+  <p class="step-no">Stap 8 van 8</p>
+  <h1>Referentiële integriteit testen</h1>
+  <p class="lead">Refererende sleutels bewaken de samenhang van onze gegevens: de server weigert gegevens die naar het niets verwijzen. In deze stap testen we dat, en bepalen we wat er moet gebeuren als we een rij verwijderen waar andere rijen naar verwijzen.</p>
+
+  <figure class="goals" aria-label="Wat leren we in deze stap?">
+    <div class="goals-head"><span class="tname">stap_8</span><span class="hint">wat leren we?</span></div>
+    <ul>
+      <li class="key">We leggen uit wat referentiële integriteit is en testen ze met INSERT en DELETE.</li>
+      <li>We kiezen per relatie wat er gebeurt bij verwijderen: RESTRICT, CASCADE of SET NULL.</li>
+      <li>We passen het model aan en brengen de wijziging naar de databank.</li>
+    </ul>
+  </figure>
+
+  <h2>Wat is referentiële integriteit?</h2>
+  <p>Elke waarde in een refererende sleutel moet bestaan als primaire sleutel in de tabel waarnaar ze verwijst, of leeg zijn als dat toegelaten is. Heeft een artiest <code>genreID</code> 4, dan moet genre 4 bestaan. De server controleert dat bij elke INSERT, UPDATE en DELETE.</p>
+  <p>Gebruik voor de testen hieronder de databank uit stap 7, gevuld met <a href="downloads/festival_insert.sql" download>festival_insert.sql</a>. Voer elke opdracht apart uit met <kbd>Ctrl</kbd> + <kbd>Enter</kbd>.</p>
+
+  <h2>Test 1: een kind zonder ouder</h2>
+  <div class="code">
+<pre><code>USE festival;
+
+INSERT INTO optreden (datum, beginuur, einduur, artiestID, podiumID)
+VALUES ('2027-07-11', '15:00:00', '16:00:00', 99, 1);</code></pre>
+  </div>
+  <p>Resultaat: <code>Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails</code>. Er bestaat geen artiest 99, dus de server weigert het optreden.</p>
+
+  <h2>Test 2: een ouder met kinderen verwijderen</h2>
+  <div class="code">
+<pre><code>DELETE FROM genre WHERE genreID = 1;</code></pre>
+  </div>
+  <p>Resultaat: <code>Error Code: 1451. Cannot delete or update a parent row: a foreign key constraint fails</code>. Genre 1 (Pop) heeft artiesten. Mocht de server het genre toch verwijderen, dan verwezen die artiesten naar een genre dat niet meer bestaat. Zonder genre-artiesten lukt het wel: genre 6 (Metal) kunnen we gewoon verwijderen.</p>
+
+  <h2>ON DELETE en ON UPDATE</h2>
+  <p>Bij elke refererende sleutel bepalen we wat de server doet als de ouder verwijderd (<code>ON DELETE</code>) of de PS van de ouder gewijzigd (<code>ON UPDATE</code>) wordt.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Optie</th><th>Wat gebeurt er met de kinderen?</th></tr></thead>
+    <tbody>
+      <tr><td><code>RESTRICT</code> of <code>NO ACTION</code></td><td>Niets: de server weigert de ouder te verwijderen zolang er kinderen zijn. Dit is de standaard in Workbench. In MySQL betekenen beide hetzelfde.</td></tr>
+      <tr><td><code>CASCADE</code></td><td>De kinderen worden mee verwijderd (bij ON DELETE) of hun RS wordt mee aangepast (bij ON UPDATE). Dit heet <i>cascading delete</i> en <i>cascading update</i>.</td></tr>
+      <tr><td><code>SET NULL</code></td><td>De RS van de kinderen wordt leeg. Kan enkel als die RS leeg mag zijn.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Onze keuzes voor het festival</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Refererende sleutel</th><th>ON DELETE</th><th>Waarom?</th></tr></thead>
+    <tbody>
+      <tr><td><code>favoriet.bezoekerID</code></td><td><code>CASCADE</code></td><td>Verdwijnt een bezoeker, dan hebben zijn favorieten geen zin meer.</td></tr>
+      <tr><td><code>favoriet.artiestID</code></td><td><code>CASCADE</code></td><td>Verdwijnt een artiest uit de line-up, dan verdwijnt hij ook uit de favorieten.</td></tr>
+      <tr><td><code>bezoeker.campingzoneID</code></td><td><code>SET NULL</code></td><td>Sluit een zone, dan blijven de bezoekers bestaan. Ze kamperen gewoon (nog) nergens.</td></tr>
+      <tr><td><code>optreden.artiestID</code>, <code>optreden.podiumID</code></td><td><code>RESTRICT</code></td><td>Een artiest of podium met geplande optredens mag niet zomaar verdwijnen.</td></tr>
+      <tr><td><code>artiest.genreID</code></td><td><code>RESTRICT</code></td><td>Een genre dat nog gebruikt wordt, blijft staan.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Het model aanpassen</h2>
+  <ol class="steps">
+    <li><p>Open <code>festival.mwb</code> en het EER-diagram.</p></li>
+    <li><p>Dubbelklik op de tabel <code>favoriet</code> en open in de tabeleditor het tabblad <span class="ui">Foreign Keys</span>.</p></li>
+    <li><p>Selecteer links de RS die naar <code>bezoeker</code> verwijst. Kies rechts bij <span class="ui">Foreign Key Options</span> voor <span class="ui">On Delete</span> de waarde <code>CASCADE</code>.</p></li>
+    <li><p>Doe hetzelfde voor de RS die naar <code>artiest</code> verwijst.</p></li>
+    <li><p>Dubbelklik op <code>bezoeker</code>, open <span class="ui">Foreign Keys</span>, selecteer de RS naar <code>campingzone</code> en kies bij <span class="ui">On Delete</span> de waarde <code>SET NULL</code>.</p></li>
+    <li><p>Bewaar het model.</p></li>
+  </ol>
+
+  <div class="wb" role="img" aria-label="Vereenvoudigde weergave van het tabblad Foreign Keys van de tabel favoriet">
+    <div class="wb-title"><span>Table: favoriet, tabblad Foreign Keys</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-body">
+      <div class="wb-cols">
+        <div class="wb-box">
+          <table class="wb-grid" style="width:100%">
+            <thead><tr><th>Foreign Key Name</th><th>Referenced Table</th></tr></thead>
+            <tbody>
+              <tr style="background:var(--gold-soft)"><td>fk_bezoeker_has_artiest_bezoeker</td><td>`festival`.`bezoeker`</td></tr>
+              <tr><td>fk_bezoeker_has_artiest_artiest1</td><td>`festival`.`artiest`</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="wb-box">
+          <div class="wb-section" style="margin-top:0">Foreign Key Options</div>
+          <div class="wb-row"><span style="min-width:5.5rem">On Update:</span><span class="wb-field" style="min-width:7rem">NO ACTION ▾</span></div>
+          <div class="wb-row"><span style="min-width:5.5rem">On Delete:</span><span class="wb-field" style="min-width:7rem;outline:2px solid var(--gold)">CASCADE ▾</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>De wijziging naar de databank brengen</h2>
+  <p>Zoals we in stap 6 zagen, komt een wijziging niet door met een gewone Forward Engineer. Kies een van de twee methodes:</p>
+  <ul>
+    <li><b>Alles opnieuw:</b> Forward Engineer met <span class="ui">Generate DROP Statements Before Each CREATE Statement</span> en <span class="ui">Generate DROP SCHEMA</span> aangevinkt. Voer daarna <code>festival_insert.sql</code> opnieuw uit.</li>
+    <li><b>Synchroniseren:</b> <span class="menu-path">Database <span class="sep">›</span> Synchronize Model…</span> Workbench toont de <code>ALTER TABLE</code>-opdrachten die het zal uitvoeren. De gegevens blijven staan.</li>
+  </ul>
+
+  <h2>Test 3: CASCADE</h2>
+  <p>Kid Kompas (artiest 12) heeft zijn optredens geannuleerd, maar staat nog bij drie bezoekers als favoriet.</p>
+  <div class="code">
+<pre><code>SELECT * FROM favoriet WHERE artiestID = 12;   -- 3 rijen
+
+DELETE FROM artiest WHERE artiestID = 12;
+
+SELECT * FROM favoriet WHERE artiestID = 12;   -- 0 rijen</code></pre>
+  </div>
+  <p>De artiest is verwijderd, en zijn drie favorieten zijn automatisch mee verdwenen.</p>
+
+  <h2>Test 4: SET NULL</h2>
+  <div class="code">
+<pre><code>DELETE FROM campingzone WHERE campingzoneID = 3;
+
+SELECT voornaam, familienaam, campingzoneID
+FROM bezoeker
+WHERE bezoekerID IN (7, 11, 15);</code></pre>
+  </div>
+  <p>Zone Comfort is weg. Nora, Amélie en Elena bestaan nog, maar hun <code>campingzoneID</code> is nu <code>NULL</code>.</p>
+
+  <h2>Test 5: RESTRICT blijft werken</h2>
+  <div class="code">
+<pre><code>DELETE FROM artiest WHERE artiestID = 1;</code></pre>
+  </div>
+  <p>Neon Atlas heeft twee optredens. De RS in <code>optreden</code> staat op <code>RESTRICT</code>, dus de server weigert met fout 1451.</p>
+  <details>
+    <summary>Denkvraag: waarom lukt Kid Kompas wel en Neon Atlas niet?</summary>
+    <div class="details-body">
+      <p>Beide artiesten staan in <code>favoriet</code>, en daar mag de server cascaderen. Maar Neon Atlas staat ook in <code>optreden</code>, en die RS staat op <code>RESTRICT</code>. Eén weigerende relatie volstaat om het verwijderen te blokkeren. Kid Kompas heeft geen optredens, dus niets houdt hem tegen.</p>
+    </div>
+  </details>
+
+  <aside class="note tip">
+    <p class="note-title">Extra: van databank naar model</p>
+    <p>Met <span class="menu-path">Database <span class="sep">›</span> Reverse Engineer…</span> (<kbd>Ctrl</kbd> + <kbd>R</kbd>) maakt Workbench een model en EER-diagram van een bestaande databank. Handig om de databank van iemand anders te bekijken, of als je je <code>.mwb</code>-bestand kwijt bent.</p>
+  </aside>
+
+  <aside class="note check">
+    <p class="note-title">Controle</p>
+    <ul class="checklist" data-key="stap8">
+      <li><label><input type="checkbox"><span>Ik heb fout 1452 en fout 1451 zelf zien verschijnen en kan ze uitleggen.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik ken het verschil tussen RESTRICT, CASCADE en SET NULL.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb ON DELETE aangepast in het model en naar de databank gebracht.</span></label></li>
+      <li><label><input type="checkbox"><span>Test 3, 4 en 5 gaven het verwachte resultaat.</span></label></li>
+    </ul>
+  </aside>
+
+  <p>Klaar met het voorbeeld? Op naar de <a href="oefeningen.html">oefeningen</a>.</p>
+
+  <nav class="pager" data-auto aria-label="Vorige en volgende stap"></nav>
+</div>
+</main>
+</div>
+</body>
+</html>
