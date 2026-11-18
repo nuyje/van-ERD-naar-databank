@@ -26,7 +26,7 @@
 
   <p class="step-no">Stap 1 van 8</p>
   <h1>Van ERD naar databaseontwerp</h1>
-  <p class="lead">Voor we Workbench openen, zetten we de regels uit de cursus nog eens op een rij. Een databaseontwerp beschrijft precies welke tabellen, kolommen en sleutels we nodig hebben, en welk soort gegevens in elke kolom komt.</p>
+  <p class="lead">Voor we Workbench openen, zetten we de omzettingsregels nog eens op een rij. Een databaseontwerp beschrijft precies welke tabellen, kolommen en sleutels we nodig hebben, en welk soort gegevens in elke kolom komt.</p>
 
   <figure class="goals" aria-label="Wat leren we in deze stap?">
     <div class="goals-head"><span class="tname">stap_1</span><span class="hint">wat leren we?</span></div>
@@ -39,7 +39,7 @@
   </figure>
 
   <h2>De omzettingsregels</h2>
-  <p>In hoofdstuk 3 van de cursus zetten we een ERD om naar een databaseontwerp. In Workbench passen we exact dezelfde regels toe; alleen het gereedschap is nieuw. De laatste kolom toont welk gereedschap we in de volgende stappen gebruiken.</p>
+  <p>Een ERD zetten we volgens vaste regels om naar een databaseontwerp. In Workbench passen we exact dezelfde regels toe; alleen het gereedschap is nieuw. De laatste kolom toont welk gereedschap we in de volgende stappen gebruiken.</p>
 
   <div class="table-wrap">
   <table>
@@ -50,20 +50,21 @@
       <tr><td>Identificerend attribuut (vet)</td><td>Primaire sleutel (PS)</td><td>Vinkje <span class="pk">PK</span></td></tr>
       <tr><td>1:1-relatie zonder attributen</td><td>PS van de ene tabel als refererende sleutel (RS) in de andere</td><td>1:1-relatie, en <b>UQ</b> op de RS</td></tr>
       <tr><td>1:n-relatie zonder attributen</td><td>PS van de één-kant als RS in de veel-kant</td><td>1:n-relatie</td></tr>
-      <tr><td>m:n-relatie zonder attributen</td><td>Extra tabel met beide PS'en, samen de PS van die tabel</td><td>n:m-relatie (maakt de extra tabel zelf)</td></tr>
-      <tr><td>Relatie met attributen</td><td>Extra tabel met de PS'en als RS, plus de attributen</td><td>Eigen tabel + twee 1:n-relaties</td></tr>
-      <tr><td>Optionaliteit nul (cirkeltje) bij de één-kant</td><td>RS mag leeg blijven (NULL)</td><td><b>Mandatory</b> uitvinken, <span class="nn">NN</span> uit</td></tr>
+      <tr><td>m:n-relatie zonder attributen</td><td>Extra tabel (koppeltabel) met beide PS'en, samen de PS van die tabel</td><td>n:m-relatie: Workbench maakt de koppeltabel zelf</td></tr>
+      <tr><td>m:n-relatie met attributen</td><td>Koppeltabel met de PS'en als RS, plus de attributen van de relatie</td><td>n:m-relatie, daarna de attributen toevoegen aan de koppeltabel</td></tr>
+      <tr><td>Optionaliteit nul (cirkeltje) aan de één-kant</td><td>RS mag leeg blijven (NULL)</td><td><b>Mandatory</b> uitvinken bij <span class="ui">Referenced Table</span>; <span class="nn">NN</span> gaat mee uit</td></tr>
+      <tr><td>Optionaliteit nul (cirkeltje) aan de veel-kant</td><td>Geen verschil in de tabellen: een ouder mag zonder kinderen bestaan</td><td><b>Mandatory</b> uitvinken bij <span class="ui">Referencing Table</span></td></tr>
     </tbody>
   </table>
   </div>
 
-  <aside class="note course">
-    <p class="note-title">Uit de cursus</p>
-    <p>Hoofdstuk 3 (p. 23–30) werkt elke regel uit met voorbeelden: werknemer en bureautafel, man en vrouw, persoon en cursus. Het overzicht in 3.5 is een handige samenvatting om naast je te leggen.</p>
+  <aside class="note info">
+    <p class="note-title">Koppeltabellen maken we pas bij de relaties</p>
+    <p>Tabellen die uit een m:n-relatie voortkomen, maken we niet zelf aan bij de andere tabellen. Workbench zet die koppeltabel er zelf tussen wanneer we de relatie leggen. Pas daarna voegen we de attributen van de relatie toe.</p>
   </aside>
 
   <h3>De symbolen</h3>
-  <p>Goed nieuws: Workbench tekent relaties met dezelfde kraaienpootnotatie als onze cursus. Het symbool tegen een tabel zegt hoeveel rijen van díe tabel bij één rij van de andere tabel horen.</p>
+  <p>Goed nieuws: Workbench tekent relaties met dezelfde kraaienpootnotatie als onze ERD's. Het symbool tegen een tabel zegt hoeveel rijen van díe tabel bij één rij van de andere tabel horen.</p>
   <div class="table-wrap">
   <table>
     <thead><tr><th>Symbool</th><th>Betekenis</th><th>Minimum en maximum</th></tr></thead>
@@ -78,12 +79,12 @@
   <p>Het teken het dichtst bij de tabel is de <b>cardinaliteit</b> (maximum: één of veel), het teken daarnaast de <b>optionaliteit</b> (minimum: nul of één).</p>
 
   <h2>Sleutels: primair, refererend en surrogaat</h2>
-  <p>Elke tabel krijgt een <span class="pk">primaire sleutel</span>: een kolom die elke rij uniek maakt en nooit leeg is. Net als in de cursus (1.1.2) kiezen we bijna altijd een <b>surrogaatsleutel</b>: een extra kolom zoals <code>artiestID</code> die enkel dient om de rij te herkennen. In MySQL maken we daar een geheel getal van met <b>AUTO_INCREMENT</b>, zodat de server zelf 1, 2, 3 … nummert.</p>
+  <p>Elke tabel krijgt een <span class="pk">primaire sleutel</span>: een kolom die elke rij uniek maakt en nooit leeg is. We kiezen bijna altijd een <b>surrogaatsleutel</b>: een extra kolom zoals <code>artiestID</code> die enkel dient om de rij te herkennen. In MySQL maken we daar een geheel getal van met <b>AUTO_INCREMENT</b>, zodat de server zelf 1, 2, 3 … nummert.</p>
   <p>Een <span class="fk">refererende sleutel</span> is een kolom die verwijst naar de PS van een andere tabel. Zo legt de databank het verband tussen de tabellen. De server controleert dat elke waarde in een RS echt bestaat in de andere tabel: dat heet <b>referentiële integriteit</b>. In stap 8 testen we dat.</p>
 
   <aside class="note tip">
     <p class="note-title">Extra tabel: welke primaire sleutel?</p>
-    <p>Bij een relatie met attributen vragen we ons af of de combinatie van de twee RS'en altijd uniek is. Een team schrijft maar één keer in voor hetzelfde toernooi: dan is <code>(teamID, toernooiID)</code> een goede samengestelde PS. Kan dezelfde combinatie meerdere keren voorkomen (een artiest speelt twee keer op hetzelfde podium), dan geven we de tabel een eigen surrogaatsleutel. Zie ook cursus 3.3.3.</p>
+    <p>Bij een relatie met attributen vragen we ons af of de combinatie van de twee RS'en altijd uniek is. Een team schrijft maar één keer in voor hetzelfde toernooi: dan is <code>(teamID, toernooiID)</code> een goede samengestelde PS. Kan dezelfde combinatie meerdere keren voorkomen (een artiest speelt twee keer op hetzelfde podium), dan geven we de tabel een eigen surrogaatsleutel.</p>
   </aside>
 
   <h2>Datatypes kiezen</h2>
@@ -147,9 +148,9 @@
   </div>
   <p>Gebruik nooit spaties, accenten of leestekens in namen. Verwijst een tabel twee keer naar dezelfde tabel, dan kiezen we beschrijvende namen, zoals <code>thuisclubID</code> en <code>uitclubID</code>.</p>
 
-  <aside class="note course">
-    <p class="note-title">Waarom geen tblArtiest zoals in de cursus?</p>
-    <p>MySQL op Windows bewaart tabelnamen standaard in kleine letters: <code>tblArtiest</code> wordt op de server <code>tblartiest</code>. Daarom schrijven we tabelnamen meteen in kleine letters, en laten we het voorvoegsel <code>tbl</code> weg. Of iets een tabel is, zien we in Workbench toch aan het icoon.</p>
+  <aside class="note info">
+    <p class="note-title">Waarom geen tblArtiest?</p>
+    <p>Tabelnamen worden soms geschreven met het voorvoegsel <code>tbl</code>, zoals <code>tblArtiest</code>. Maar MySQL op Windows bewaart tabelnamen standaard in kleine letters: <code>tblArtiest</code> wordt op de server <code>tblartiest</code>. Daarom schrijven we tabelnamen meteen in kleine letters, en laten we het voorvoegsel <code>tbl</code> weg. Of iets een tabel is, zien we in Workbench toch aan het icoon.</p>
   </aside>
 
   <h2>Even oefenen</h2>

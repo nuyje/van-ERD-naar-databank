@@ -58,12 +58,12 @@ ENGINE = InnoDB;
 -- Table `festival`.`optreden`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `festival`.`optreden` (
+  `artiestID` INT NOT NULL,
+  `podiumID` INT NOT NULL,
   `optredenID` INT NOT NULL AUTO_INCREMENT,
   `datum` DATE NOT NULL,
   `beginuur` TIME NOT NULL,
   `einduur` TIME NOT NULL,
-  `artiestID` INT NOT NULL,
-  `podiumID` INT NOT NULL,
   PRIMARY KEY (`optredenID`),
   INDEX `fk_optreden_artiest_idx` (`artiestID` ASC) VISIBLE,
   INDEX `fk_optreden_podium_idx` (`podiumID` ASC) VISIBLE,

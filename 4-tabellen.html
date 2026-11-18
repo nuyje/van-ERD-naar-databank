@@ -26,12 +26,12 @@
 
   <p class="step-no">Stap 4 van 8</p>
   <h1>Tabellen en kolommen</h1>
-  <p class="lead">We zetten de tabellen op het tekenvlak en geven ze hun kolommen. De refererende sleutels voegen we nu nog niet toe: die maakt Workbench voor ons in stap 5.</p>
+  <p class="lead">We zetten de tabellen voor de entiteiten op het tekenvlak en geven ze hun kolommen. De refererende sleutels en de koppeltabellen maken we nu nog niet: die maakt Workbench voor ons wanneer we in stap 5 de relaties leggen.</p>
 
   <figure class="goals" aria-label="Wat leren we in deze stap?">
     <div class="goals-head"><span class="tname">stap_4</span><span class="hint">wat leren we?</span></div>
     <ul>
-      <li class="key">We maken de tabellen genre, artiest, podium, optreden, campingzone en bezoeker met hun eigen kolommen.</li>
+      <li class="key">We maken de tabellen genre, artiest, podium, campingzone en bezoeker met hun eigen kolommen.</li>
       <li>We stellen per kolom het datatype en de eigenschappen PK, NN, UQ en AI in.</li>
       <li>We lezen de iconen naast de kolommen in het diagram.</li>
     </ul>
@@ -85,11 +85,12 @@
   </div>
 
   <h2>De andere tabellen</h2>
-  <p>Maak op dezelfde manier de vijf andere tabellen. Werk tabel per tabel: eerst de naam, dan de kolommen. Een <span class="yes">✓</span> betekent: vinkje aan.</p>
+  <p>Maak op dezelfde manier de vier andere tabellen. Werk tabel per tabel: eerst de naam, dan de kolommen. Een <span class="yes">✓</span> betekent: vinkje aan.</p>
 
   <aside class="note warn">
-    <p class="note-title">Geen refererende sleutels typen</p>
-    <p>Voeg <b>geen</b> kolommen <code>genreID</code>, <code>artiestID</code>, <code>podiumID</code> of <code>campingzoneID</code> toe aan andere tabellen. Die maakt Workbench automatisch wanneer we in stap 5 de relaties leggen. Typen we ze zelf, dan riskeren we dubbele kolommen. Ook de tabel <code>favoriet</code> maken we pas in stap 5.</p>
+    <p class="note-title">Geen refererende sleutels en geen koppeltabellen</p>
+    <p>Voeg <b>geen</b> kolommen <code>genreID</code> of <code>campingzoneID</code> toe aan andere tabellen. Die maakt Workbench automatisch wanneer we in stap 5 de relaties leggen. Typen we ze zelf, dan riskeren we dubbele kolommen.</p>
+    <p>Ook de tabellen <code>favoriet</code> en <code>optreden</code> maken we nu <b>niet</b>. Ze komen voort uit een m:n-relatie: Workbench zet ze er zelf tussen in stap 5, en pas dan voegen we de attributen datum, beginuur en einduur toe.</p>
   </aside>
 
   <div class="table-wrap"><table class="design">
@@ -110,17 +111,6 @@
       <tr><td><code>naam</code></td><td>VARCHAR(45)</td><td></td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td></tr>
       <tr><td><code>capaciteit</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
       <tr><td><code>overdekt</code></td><td>TINYINT(1)</td><td></td><td class="yes">✓</td><td></td><td></td><td><code>0</code></td></tr>
-    </tbody>
-  </table></div>
-
-  <div class="table-wrap"><table class="design">
-    <caption>Tabel <code>optreden</code></caption>
-    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th></tr></thead>
-    <tbody>
-      <tr><td><code>optredenID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td></tr>
-      <tr><td><code>datum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
-      <tr><td><code>beginuur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
-      <tr><td><code>einduur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td></tr>
     </tbody>
   </table></div>
 
@@ -158,11 +148,11 @@
   <aside class="note check">
     <p class="note-title">Controle</p>
     <ul class="checklist" data-key="stap4">
-      <li><label><input type="checkbox"><span>Ik heb zes tabellen: <code>genre</code>, <code>artiest</code>, <code>podium</code>, <code>optreden</code>, <code>campingzone</code> en <code>bezoeker</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb vijf tabellen: <code>genre</code>, <code>artiest</code>, <code>podium</code>, <code>campingzone</code> en <code>bezoeker</code>.</span></label></li>
       <li><label><input type="checkbox"><span>Elke tabel heeft een PS met de vinkjes PK, NN en AI.</span></label></li>
-      <li><label><input type="checkbox"><span>Ik heb de datatypes uit het ontwerp gebruikt, ook <code>DATE</code>, <code>TIME</code> en <code>TINYINT(1)</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb de datatypes uit het ontwerp gebruikt, ook <code>DATE</code> en <code>TINYINT(1)</code>.</span></label></li>
       <li><label><input type="checkbox"><span>NN en UQ staan aan waar het ontwerp dat vraagt.</span></label></li>
-      <li><label><input type="checkbox"><span>Ik heb nog geen refererende sleutels zelf getypt.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik heb nog geen refererende sleutels getypt en nog geen koppeltabellen gemaakt.</span></label></li>
       <li><label><input type="checkbox"><span>Ik heb mijn model bewaard.</span></label></li>
     </ul>
   </aside>

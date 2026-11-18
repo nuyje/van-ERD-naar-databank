@@ -38,8 +38,8 @@
 
   <h2>Zo pakken we elke oefening aan</h2>
   <ol class="steps">
-    <li><p><b>Ontwerp.</b> Lees de opdracht, bekijk of teken het ERD en noteer de tabellen in de notatie van de cursus.</p></li>
-    <li><p><b>Model.</b> Nieuw model in Workbench, schema hernoemen, tabellen en relaties tekenen. Bewaar als <code>oefN_naam.mwb</code>.</p></li>
+    <li><p><b>Ontwerp.</b> Lees de opdracht, bekijk of teken het ERD en noteer de tabellen als relationeel schema.</p></li>
+    <li><p><b>Model.</b> Nieuw model in Workbench, schema hernoemen en de tabellen voor de entiteiten tekenen. Daarna de relaties leggen: koppeltabellen laten we maken met de n:m-tool, en de vakjes <span class="ui">Mandatory</span> zetten we zoals in het ERD. Bewaar als <code>oefN_naam.mwb</code>.</p></li>
     <li><p><b>Forward Engineer.</b> Bewaar het script bij de stap <i>Script nakijken</i> met <span class="ui">Save to File…</span> als <code>oefN_naam_create.sql</code>.</p></li>
     <li><p><b>Gegevens.</b> Voer het testscript uit, of schrijf zelf een insert-script <code>oefN_naam_insert.sql</code>.</p></li>
     <li><p><b>Testen.</b> Loopt alles zonder fouten? Controleer met <code>SELECT * FROM …</code> en test minstens één keer de referentiële integriteit.</p></li>
@@ -50,7 +50,7 @@
   <section class="exercise" id="oef1">
     <h2>Oefening 1: Boodschappenlijst <span class="level" role="img" aria-label="moeilijkheid 1 van 3"><i class="on"></i><i></i><i></i></span></h2>
     <ul class="meta-list"><li>Schema: <code>boodschappen</code></li><li>Gegeven: volledig ontwerp en testscript</li><li>Nieuw: zelfstandig werken</li></ul>
-    <p>Herinner je de opdracht uit de les: onze ouders willen een databank voor hun boodschappenlijstje. Ze winkelen in verschillende winkels, waarvan we naam en adres bewaren. Van een boodschap bewaren we een korte omschrijving, de hoeveelheid en de eenheid (stuk, liter, kilogram …), wie ze ingaf en op welke datum, en in welke winkel we ze kopen. Extra: van elke winkel bewaren we de openingsuren.</p>
+    <p>Onze ouders willen een databank voor hun boodschappenlijstje. Ze winkelen in verschillende winkels, waarvan we naam en adres bewaren. Van een boodschap bewaren we een korte omschrijving, de hoeveelheid en de eenheid (stuk, liter, kilogram …), wie ze ingaf en op welke datum, en in welke winkel we ze kopen. Extra: van elke winkel bewaren we de openingsuren.</p>
     <p>Het ontwerp is gegeven. Bouw het exact na: het testscript gebruikt deze namen.</p>
   </section>
 </div>
@@ -72,7 +72,7 @@
     </tbody>
   </table>
   </div>
-  <p>Alle kolommen zijn verplicht (NN). Alle relaties zijn 1:n.</p>
+  <p>Alle kolommen zijn verplicht (NN). Alle relaties zijn 1:n. Aan de veel-kant mag er telkens <b>nul</b> zijn: een persoon die nog niets ingaf, een winkel zonder boodschappen of zonder gekende openingsuren. Vink daarom bij elke relatie <span class="ui">Mandatory</span> uit bij de <span class="ui">Referencing Table</span>, zoals in de figuur.</p>
   <h3>Wat doen we?</h3>
   <ol>
     <li>Bouw het model <code>oef1_boodschappen.mwb</code> en zet het met Forward Engineer om naar de databank <code>boodschappen</code>.</li>
@@ -82,7 +82,7 @@
   <details>
     <summary>Denkvraag: waarom staan de openingsuren in een aparte tabel?</summary>
     <div class="details-body">
-      <p>Een winkel heeft per dag andere openingsuren: dat is een <b>repeterende groep</b> tegenover de primaire sleutel <code>winkelID</code>. Kolommen als <code>maandag</code>, <code>dinsdag</code> … in <code>winkel</code> zouden vaak leeg blijven en zijn lastig te bevragen. Volgens de eerste normaalvorm (cursus 4.4) brengen we de repeterende groep onder in een eigen tabel.</p>
+      <p>Een winkel heeft per dag andere openingsuren: dat is een <b>repeterende groep</b> tegenover de primaire sleutel <code>winkelID</code>. Kolommen als <code>maandag</code>, <code>dinsdag</code> … in <code>winkel</code> zouden vaak leeg blijven en zijn lastig te bevragen. Volgens de eerste normaalvorm brengen we de repeterende groep onder in een eigen tabel.</p>
     </div>
   </details>
   <details>
@@ -102,13 +102,13 @@
 <div class="bleed">
   <figure>
     <div class="diagram" style="max-width:1010px"><img src="img/erd-kijkbox.svg" width="990" height="210" style="min-width:900px" alt="ERD van Kijkbox: Serie bestaat uit Seizoen, Seizoen bevat Aflevering, Profiel bekijkt Aflevering met de attributen bekekenOp en minutenGekeken."></div>
-    <figcaption>Het ERD van Kijkbox in de notatie van de cursus.</figcaption>
+    <figcaption>Het ERD van Kijkbox.</figcaption>
   </figure>
 </div>
 <div class="content">
   <h3>Wat doen we?</h3>
   <ol>
-    <li>Zet het ERD om naar een databaseontwerp in de notatie van de cursus. Noem de tabel voor de relatie <i>bekijkt</i> <code>kijkbeurt</code>, met als PS <code>kijkbeurtID</code>.</li>
+    <li>Zet het ERD om naar een databaseontwerp (relationeel schema). Noem de tabel voor de relatie <i>bekijkt</i> <code>kijkbeurt</code>, met als PS <code>kijkbeurtID</code>.</li>
     <li>Kies voor elke kolom een datatype en bepaal NN en UQ.</li>
     <li>Bouw het model <code>oef2_kijkbox.mwb</code> en zet het om naar de databank <code>kijkbox</code>. Volg strikt de naamgevingsafspraken: tabelnamen in kleine letters, attribuutnamen zoals in het ERD, RS met dezelfde naam als de PS.</li>
     <li>Voer het testscript <a href="downloads/oef2_kijkbox_test.sql" download>oef2_kijkbox_test.sql</a> uit. Verwacht: 3 series, 4 seizoenen, 14 afleveringen, 4 profielen en 12 kijkbeurten.</li>
@@ -117,7 +117,8 @@
   <details>
     <summary>Hint: welke relaties leggen we?</summary>
     <div class="details-body">
-      <p><i>bestaat uit</i> en <i>bevat</i> zijn 1:n-relaties: <code>seizoen</code> krijgt <code>serieID</code> en <code>aflevering</code> krijgt <code>seizoenID</code>. <i>bekijkt</i> is een m:n-relatie mét attributen: maak zelf de tabel <code>kijkbeurt</code> met <code>kijkbeurtID</code>, <code>bekekenOp</code> en <code>minutenGekeken</code>, en leg twee 1:n-relaties (naar <code>profiel</code> en naar <code>aflevering</code>). Net zoals <code>optreden</code> bij het festival.</p>
+      <p><i>bestaat uit</i> en <i>bevat</i> zijn 1:n-relaties: <code>seizoen</code> krijgt <code>serieID</code> en <code>aflevering</code> krijgt <code>seizoenID</code>. In het ERD staat daar aan beide kanten een streepje (minstens één): de vakjes <span class="ui">Mandatory</span> mogen aan blijven.</p>
+      <p><i>bekijkt</i> is een m:n-relatie mét attributen. Werk zoals bij <code>optreden</code> in stap 5: leg de relatie met de n:m-tool tussen <code>profiel</code> en <code>aflevering</code>, hernoem de koppeltabel naar <code>kijkbeurt</code>, voeg de PS <code>kijkbeurtID</code> toe (PK, NN, AI) en vink PK uit bij de twee RS'en. Voeg pas daarna <code>bekekenOp</code> en <code>minutenGekeken</code> toe. In het ERD staat aan beide kanten een cirkeltje: vink bij beide lijnen <span class="ui">Mandatory</span> uit bij de <span class="ui">Referencing Table</span>.</p>
     </div>
   </details>
   <details>
@@ -154,13 +155,14 @@
     <details>
       <summary>Hint: optionele relatie</summary>
       <div class="details-body">
-        <p>Free agents hebben geen team: de RS <code>teamID</code> in <code>speler</code> moet leeg kunnen blijven. Vink bij de relatie <span class="ui">Mandatory</span> uit aan de kant van <span class="ui">Referenced Table</span> (zoals bij <code>campingzone</code> in stap 5). In het insert-script schrijven we dan <code>NULL</code>.</p>
+        <p>Free agents hebben geen team: de RS <code>teamID</code> in <code>speler</code> moet leeg kunnen blijven. Vink bij de relatie <span class="ui">Mandatory</span> uit aan de kant van <span class="ui">Referenced Table</span> (zoals bij <code>campingzone</code> in stap 5). In het insert-script schrijven we dan <code>NULL</code>. Zet ook alle andere vakjes <span class="ui">Mandatory</span> zoals in jouw ERD.</p>
       </div>
     </details>
     <details>
-      <summary>Hint: welke primaire sleutel voor de inschrijving?</summary>
+      <summary>Hint: de koppeltabel inschrijving</summary>
       <div class="details-body">
-        <p>Een team schrijft maar één keer in voor hetzelfde toernooi. De combinatie <code>(teamID, toernooiID)</code> is dus altijd uniek en kan de samengestelde PS zijn. Vergelijk met <code>optreden</code>: daar kon dezelfde combinatie meermaals voorkomen. Een surrogaatsleutel <code>inschrijvingID</code> is ook goed, als je dat kan verantwoorden.</p>
+        <p>Leg de relatie met de n:m-tool tussen <code>team</code> en <code>toernooi</code> en hernoem de koppeltabel naar <code>inschrijving</code>. Voeg daarna de attributen toe: <code>inschrijvingsdatum</code>, <code>eindplaats</code> (mag leeg blijven) en <code>prijzengeld</code>.</p>
+        <p>Workbench maakt van <code>(teamID, toernooiID)</code> de PS. Een team schrijft maar één keer in voor hetzelfde toernooi, dus die combinatie is altijd uniek: we mogen deze PS houden. Vergelijk met <code>optreden</code>: daar kon dezelfde combinatie meermaals voorkomen. Een surrogaatsleutel <code>inschrijvingID</code> is ook goed, als je dat kan verantwoorden.</p>
       </div>
     </details>
     <aside class="note tip">
@@ -200,6 +202,7 @@
     <summary>Hint: twee relaties naar dezelfde tabel</summary>
     <div class="details-body">
       <p>Leg twee keer een 1:n-relatie: klik telkens eerst op <code>wedstrijd</code>, dan op <code>club</code>. Omdat de kolom <code>clubID</code> al bestaat, geeft Workbench de tweede RS een andere naam. Hernoem de kolommen naar <code>thuisclubID</code> en <code>uitclubID</code>. Een RS hoeft dus niet dezelfde naam te hebben als de PS waarnaar ze verwijst.</p>
+      <p>In het ERD heeft een club nul of meer thuiswedstrijden en nul of meer uitwedstrijden. Vink daarom bij beide lijnen <span class="ui">Mandatory</span> uit bij de <span class="ui">Referencing Table</span> (<code>wedstrijd</code>).</p>
     </div>
   </details>
   <details>
@@ -215,24 +218,24 @@
 
   <!-- ===================================================== OEFENING 5 -->
   <section class="exercise" id="oef5">
-    <h2>Oefening 5: Van cursus naar databank <span class="level" role="img" aria-label="moeilijkheid 2 van 3"><i class="on"></i><i class="on"></i><i></i></span></h2>
-    <ul class="meta-list"><li>Schema: kies zelf een gepaste naam</li><li>Gegeven: je eigen ERD uit de cursus</li><li>Nieuw: een eigen ontwerp implementeren</li></ul>
-    <p>In de cursus Data-ontwerp (hoofdstuk 2.8) tekenden we al heel wat ERD's. Kies er <b>twee</b> uit deze lijst en implementeer ze: model, Forward Engineer en een insert-script met minstens vijf rijen per tabel.</p>
-    <ul>
-      <li>Oefening 5: Atletiek</li>
-      <li>Oefening 6: KVLV</li>
-      <li>Oefening 7: Sweet Paradise</li>
-      <li>Oefening 8: Olympisch comité</li>
-      <li>Oefening 10: Consultants</li>
-      <li>Oefening 13: Bibliotheek (vergelijk met het uitgewerkte voorbeeld in 3.4)</li>
-    </ul>
-    <aside class="note course">
-      <p class="note-title">Let op deze valkuilen uit de cursus</p>
+    <h2>Oefening 5: Valkuilen in het ontwerp <span class="level" role="img" aria-label="moeilijkheid 2 van 3"><i class="on"></i><i class="on"></i><i></i></span></h2>
+    <ul class="meta-list"><li>Schema's: <code>dansschool</code> en <code>schaaktoernooi</code></li><li>Gegeven: enkel de probleemstelling</li><li>Nieuw: procesgegevens, keuzelijsten en natuurlijke sleutels</li></ul>
+    <p>Deze twee kleine opdrachten bevatten elk een paar klassieke valkuilen. Teken voor elke opdracht het ERD, implementeer het in Workbench en schrijf een insert-script met minstens vijf rijen per tabel.</p>
+
+    <h3>5a. Dansschool Ritme</h3>
+    <p>Dansschool Ritme neemt met haar leden deel aan danswedstrijden. Van elke danser bewaren we voornaam, familienaam, adres, telefoonnummer en geboortedatum. De school wil op elk moment de leeftijd van een danser kunnen opvragen. Van een wedstrijd bewaren we de naam, de datum en het maximaal aantal deelnemers. Elke wedstrijd heeft één niveau: lokaal, nationaal of internationaal. Een danser kan aan veel wedstrijden deelnemen; per deelname bewaren we de behaalde plaats en een kort verslag van de jury. Een danser neemt maar één keer deel aan dezelfde wedstrijd.</p>
+
+    <h3>5b. Internationaal jeugdschaaktoernooi</h3>
+    <p>Op een internationaal jeugdschaaktoernooi spelen jongeren uit verschillende landen. Elk land heeft een internationale landcode van drie letters (zoals BEL, NED, FRA), een naam en een teamcoach. Van elke speler bewaren we voornaam, familienaam, geboortedatum en ratingpunten; een speler komt uit één land. Het toernooi bestaat uit verschillende reeksen, zoals snelschaak en klassiek schaak, elk met een naam, een startdatum en een einddatum. Een speler neemt deel aan één of meer reeksen. Per deelname bewaren we de eindplaats, die pas na de reeks bekend is.</p>
+
+    <aside class="note info">
+      <p class="note-title">Let op deze valkuilen</p>
       <ul>
-        <li><b>Procesgegevens</b> bewaren we niet. Bij Sweet Paradise wil de ploegleiding de leeftijd kunnen opvragen: we bewaren de geboortedatum (2.7.3).</li>
-        <li><b>Samengestelde attributen</b> splitsen we als we de delen apart gebruiken: een adres wordt straat en nummer, postcode en gemeente (2.7.2).</li>
+        <li><b>Procesgegevens</b> bewaren we niet. De dansschool wil de leeftijd kunnen opvragen: we bewaren de geboortedatum, want de leeftijd kunnen we daaruit berekenen.</li>
+        <li><b>Samengestelde attributen</b> splitsen we als we de delen apart gebruiken: een adres wordt straat en nummer, postcode en gemeente.</li>
         <li>Een <b>vaste keuzelijst</b> (lokaal, nationaal, internationaal) wordt een eigen tabel met een 1:n-relatie.</li>
-        <li>Een land heeft een internationale afkorting. Gebruik je die als PS, of kies je toch een surrogaatsleutel (1.1.2)? Verantwoord je keuze.</li>
+        <li>Een land heeft een internationale landcode. Gebruik je die als PS (een <b>natuurlijke sleutel</b>, zonder AUTO_INCREMENT), of kies je toch een surrogaatsleutel? Verantwoord je keuze.</li>
+        <li>Een waarde die pas later gekend is, zoals een eindplaats, moet <b>leeg</b> kunnen blijven.</li>
       </ul>
     </aside>
   </section>
@@ -254,6 +257,7 @@
     <ul>
       <li>Minstens 5 tabellen.</li>
       <li>Minstens één 1:n-relatie, één m:n-relatie mét attributen en één optionele relatie.</li>
+      <li>Een model waarvan elke relatie dezelfde cardinaliteit en optionaliteit heeft als het ERD.</li>
       <li>Bewust gekozen datatypes, en NN en UQ waar dat zinvol is.</li>
       <li>Per refererende sleutel een verantwoorde keuze voor ON DELETE.</li>
       <li>Een insert-script dat zonder fouten loopt na Forward Engineer, met minstens 10 rijen in de belangrijkste tabellen en 5 in de andere.</li>
@@ -261,8 +265,8 @@
 
     <h3>Wat leveren we in?</h3>
     <ol>
-      <li>Een probleemstelling van 5 tot 10 zinnen, zoals in de cursus.</li>
-      <li>Het ERD en het databaseontwerp in de notatie van de cursus.</li>
+      <li>Een probleemstelling van 5 tot 10 zinnen, zoals bij de oefeningen hierboven.</li>
+      <li>Het ERD en het databaseontwerp (relationeel schema).</li>
       <li>Het model <code>.mwb</code>.</li>
       <li>Het create-script (bewaard bij Forward Engineer) en het insert-script.</li>
       <li>Een korte reflectie: verantwoord drie ontwerpkeuzes (bijvoorbeeld een PS, een datatype en een ON DELETE).</li>
@@ -274,7 +278,7 @@
       <thead><tr><th>Onderdeel</th><th>We kijken na of …</th><th>Gewicht</th></tr></thead>
       <tbody>
         <tr><td>Ontwerp</td><td>het ERD de probleemstelling correct weergeeft, met juiste cardinaliteit en optionaliteit</td><td>25 %</td></tr>
-        <tr><td>Model</td><td>tabellen, sleutels, relaties en datatypes correct zijn en de naamgeving klopt</td><td>30 %</td></tr>
+        <tr><td>Model</td><td>tabellen, sleutels, relaties en datatypes correct zijn, de relaties dezelfde cardinaliteit en optionaliteit hebben als het ERD, en de naamgeving klopt</td><td>30 %</td></tr>
         <tr><td>Gegevens</td><td>het insert-script foutloos loopt, in de juiste volgorde, met realistische gegevens</td><td>25 %</td></tr>
         <tr><td>Integriteit</td><td>de keuzes voor ON DELETE verantwoord en getest zijn</td><td>10 %</td></tr>
         <tr><td>Afwerking</td><td>alle bestanden aanwezig zijn en de reflectie de keuzes duidelijk uitlegt</td><td>10 %</td></tr>
@@ -290,7 +294,7 @@
       <li><label><input type="checkbox"><span>Oefening 2: Streamingdienst Kijkbox</span></label></li>
       <li><label><input type="checkbox"><span>Oefening 3: Esports-toernooi</span></label></li>
       <li><label><input type="checkbox"><span>Oefening 4: Voetbalcompetitie</span></label></li>
-      <li><label><input type="checkbox"><span>Oefening 5: Van cursus naar databank</span></label></li>
+      <li><label><input type="checkbox"><span>Oefening 5: Valkuilen in het ontwerp</span></label></li>
       <li><label><input type="checkbox"><span>Oefening 6: Eindopdracht</span></label></li>
     </ul>
   </aside>

@@ -26,14 +26,14 @@
 
   <p class="step-no">Stap 5 van 8</p>
   <h1>Relaties leggen</h1>
-  <p class="lead">Nu verbinden we de tabellen. Bij elke relatie maakt Workbench automatisch de refererende sleutel aan, samen met de bijhorende beperking (<i>foreign key constraint</i>) die de server later zal bewaken.</p>
+  <p class="lead">Nu verbinden we de tabellen. Bij elke relatie maakt Workbench automatisch de refererende sleutel aan, en bij een m:n-relatie zelfs een volledige koppeltabel. Daarna stellen we in of de relatie verplicht of optioneel is, precies zoals in het ERD.</p>
 
   <figure class="goals" aria-label="Wat leren we in deze stap?">
     <div class="goals-head"><span class="tname">stap_5</span><span class="hint">wat leren we?</span></div>
     <ul>
-      <li class="key">We leggen alle relaties van het festival met de relatiegereedschappen van Workbench.</li>
-      <li>We maken een relatie optioneel, zodat de refererende sleutel leeg mag blijven.</li>
-      <li>We laten Workbench een koppeltabel maken met de n:m-tool.</li>
+      <li class="key">We leggen alle relaties van het festival, zodat het model exact overeenkomt met het ERD.</li>
+      <li>We stellen per relatie de optionaliteit in met de vakjes <b>Mandatory</b>.</li>
+      <li>We laten Workbench koppeltabellen maken met de n:m-tool en voegen daarna de attributen van de relatie toe.</li>
     </ul>
   </figure>
 
@@ -41,47 +41,30 @@
   <p>Bij een 1:n-relatie klikken we <b>eerst op de tabel aan de veel-kant</b> (die de RS krijgt) en <b>daarna op de tabel aan de één-kant</b> (die de PS levert). Een ezelsbruggetje: eerst het kind, dan de ouder.</p>
   <p>Een artiest hoort bij één genre en een genre heeft veel artiesten. De veel-kant is dus <code>artiest</code>: daar klikken we eerst.</p>
 
-  <h2>A. artiest behoort tot genre (1:n)</h2>
+  <h2>Het model moet het ERD volgen</h2>
+  <p>Workbench maakt elke nieuwe relatie aan beide kanten <b>verplicht</b>: aan de veel-kant staat een streepje met kraaienpoot (één of veel), aan de één-kant twee streepjes (precies één). In ons ERD staat op veel plaatsen een cirkeltje: nul is ook goed. Dat passen we na elke relatie aan in de relatie-editor.</p>
   <ol class="steps">
-    <li><p>Klik in de werkbalk op <span class="ui">Place a New 1:n Non-Identifying Relationship</span> (toets <kbd>2</kbd>).</p></li>
-    <li><p>Klik op de tabel <code>artiest</code> en daarna op de tabel <code>genre</code>.</p></li>
-    <li><p>Bekijk het resultaat: <code>artiest</code> heeft een nieuwe kolom <code>genreID</code> met een rood ruitje <span class="ico ico-fk"></span>. Tussen de tabellen loopt een stippellijn met de kraaienpoot bij <code>artiest</code>.</p></li>
-    <li><p>Dubbelklik op <code>artiest</code> en open in de tabeleditor het tabblad <span class="ui">Foreign Keys</span>. We zien de beperking <code>fk_artiest_genre</code>, die de kolom <code>genreID</code> koppelt aan <code>genre.genreID</code>.</p></li>
+    <li><p>Dubbelklik op de relatielijn. Onderaan opent de relatie-editor.</p></li>
+    <li><p>Kies het tabblad <span class="ui">Foreign Key</span>. Links staat de <span class="ui">Referencing Table</span> (de tabel met de RS, het kind), rechts de <span class="ui">Referenced Table</span> (de tabel met de PS, de ouder). Elk heeft een vakje <span class="ui">Mandatory</span>.</p></li>
   </ol>
-  <aside class="note tip">
-    <p class="note-title">Waarom een stippellijn?</p>
-    <p>Dit is een <i>non-identifying</i> relatie: de RS <code>genreID</code> maakt geen deel uit van de PS van <code>artiest</code>. Een artiest heeft zijn eigen <code>artiestID</code>. Bij een <i>identifying</i> relatie (volle lijn) is de RS wél een deel van de PS. Die zien we bij <code>favoriet</code>.</p>
-  </aside>
-
-  <h2>B. optreden: twee 1:n-relaties</h2>
-  <p>De relatie <i>treedt op op</i> heeft attributen. Daarom hebben we in stap 4 zelf een tabel <code>optreden</code> gemaakt. Nu verbinden we die met <code>artiest</code> en met <code>podium</code>. Elk optreden hoort bij één artiest en één podium, dus <code>optreden</code> is telkens de veel-kant.</p>
-  <ol class="steps">
-    <li><p>Kies opnieuw <span class="ui">Place a New 1:n Non-Identifying Relationship</span>. Klik op <code>optreden</code>, daarna op <code>artiest</code>. De kolom <code>artiestID</code> verschijnt in <code>optreden</code>.</p></li>
-    <li><p>Kies de tool nog eens. Klik op <code>optreden</code>, daarna op <code>podium</code>. Nu verschijnt <code>podiumID</code>.</p></li>
-  </ol>
-  <aside class="note course">
-    <p class="note-title">Uit de cursus</p>
-    <p>Zo zetten we een m:n-relatie mét attributen om: een extra tabel met de sleutels van beide entiteiten en de attributen van de relatie (cursus 3.3.3). Omdat de combinatie <code>(artiestID, podiumID)</code> niet uniek is, gaven we de tabel een surrogaatsleutel <code>optredenID</code>.</p>
-  </aside>
-
-  <h2>C. bezoeker kampeert in campingzone (optioneel)</h2>
-  <p>Deze relatie is ook 1:n, maar niet elke bezoeker kampeert. De RS <code>campingzoneID</code> moet dus leeg (NULL) mogen blijven.</p>
-  <ol class="steps">
-    <li><p>Kies <span class="ui">Place a New 1:n Non-Identifying Relationship</span>. Klik op <code>bezoeker</code>, daarna op <code>campingzone</code>.</p></li>
-    <li><p>Dubbelklik op de nieuwe relatielijn. De relatie-editor opent. Kies onderaan het tabblad <span class="ui">Foreign Key</span>.</p></li>
-    <li><p>Vink bij <span class="ui">Referenced Table</span> (de kant van <code>campingzone</code>) het vakje <span class="ui">Mandatory</span> uit.</p></li>
-    <li><p>Controleer: in de tabeleditor van <code>bezoeker</code> staat <span class="nn">NN</span> bij <code>campingzoneID</code> nu uit, en in het diagram is het ruitje van die kolom niet meer gevuld <span class="ico ico-fknull"></span>. Bij <code>campingzone</code> staat een cirkeltje op de lijn.</p></li>
-  </ol>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>In het ERD</th><th>In de relatie-editor</th><th>Gevolg in de databank</th></tr></thead>
+    <tbody>
+      <tr><td><img class="sym" src="img/symbool-nul-veel.svg" alt="cirkel en kraaienpoot"> cirkeltje aan de <b>veel-kant</b>: een ouder mag zonder kinderen</td><td><span class="ui">Mandatory</span> uitvinken bij <span class="ui">Referencing Table</span></td><td>Geen. MySQL kan niet afdwingen dat een ouder kinderen heeft, maar het model toont de relatie nu correct.</td></tr>
+      <tr><td><img class="sym" src="img/symbool-nul-een.svg" alt="cirkel en streep"> cirkeltje aan de <b>één-kant</b>: een kind mag zonder ouder</td><td><span class="ui">Mandatory</span> uitvinken bij <span class="ui">Referenced Table</span></td><td>De RS mag leeg blijven: het vinkje <span class="nn">NN</span> gaat uit.</td></tr>
+    </tbody>
+  </table>
+  </div>
 
   <div class="wb" role="img" aria-label="Vereenvoudigde weergave van de relatie-editor, tabblad Foreign Key">
-    <div class="wb-title"><span>Relationship: fk_bezoeker_campingzone</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-title"><span>Relationship, tabblad Foreign Key</span><span class="tag">vereenvoudigde weergave</span></div>
     <div class="wb-body">
       <div class="wb-cols">
         <div class="wb-box">
           <div class="wb-section" style="margin-top:0">Referencing Table</div>
-          <div><b>bezoeker</b></div>
-          <div class="small">campingzoneID</div>
-          <div style="margin-top:0.4rem"><span class="cb on"></span> Mandatory</div>
+          <div class="small">tabel met de RS (kind)</div>
+          <div style="margin-top:0.4rem"><span class="cb on hl"></span> Mandatory <span class="callout-num">1</span></div>
         </div>
         <div class="wb-box">
           <div class="wb-section" style="margin-top:0">Cardinality</div>
@@ -91,40 +74,114 @@
         </div>
         <div class="wb-box">
           <div class="wb-section" style="margin-top:0">Referenced Table</div>
-          <div><b>campingzone</b></div>
-          <div class="small">campingzoneID</div>
-          <div style="margin-top:0.4rem"><span class="cb hl"></span> Mandatory <span class="callout-num">3</span></div>
+          <div class="small">tabel met de PS (ouder)</div>
+          <div style="margin-top:0.4rem"><span class="cb on hl"></span> Mandatory <span class="callout-num">2</span></div>
         </div>
       </div>
       <div class="wb-row" style="margin-top:0.6rem"><span class="wb-btn">Relationship</span><span class="wb-btn primary">Foreign Key</span></div>
     </div>
   </div>
+  <p class="small muted">Vakje 1: cirkeltje aan de veel-kant. Vakje 2: cirkeltje aan de één-kant.</p>
 
-  <aside class="note tip">
-    <p class="note-title">En het andere vakje Mandatory?</p>
-    <p>Het vakje bij <span class="ui">Referencing Table</span> zegt of een campingzone minstens één bezoeker moet hebben. Workbench toont dat enkel in het diagram (een cirkeltje of streepje aan de veel-kant); MySQL kan dat niet afdwingen. Wil je dat het diagram helemaal klopt met het ERD, dan mag je het ook uitvinken bij deze relatie en bij <i>behoort tot</i>. Aan de databank verandert dat niets.</p>
+  <aside class="note warn">
+    <p class="note-title">Het symbool verandert niet meteen?</p>
+    <p>Bij het vakje <span class="ui">Mandatory</span> van de <span class="ui">Referencing Table</span> tekent Workbench het nieuwe symbool soms niet meteen. De instelling is wel bewaard: dubbelklik opnieuw op de lijn om het na te kijken. Wil je het symbool zien, versleep dan even een tabel of sluit het model en open het opnieuw.</p>
   </aside>
 
-  <h2>D. bezoeker volgt artiest (n:m)</h2>
-  <p>Voor een m:n-relatie zonder attributen heeft Workbench een handige tool: die maakt de koppeltabel helemaal zelf.</p>
+  <h2>A. artiest behoort tot genre (1:n)</h2>
+  <p>In het ERD: een artiest behoort tot precies één genre, een genre heeft nul of meer artiesten.</p>
+  <ol class="steps">
+    <li><p>Klik in de werkbalk op <span class="ui">Place a New 1:n Non-Identifying Relationship</span> (toets <kbd>2</kbd>).</p></li>
+    <li><p>Klik op de tabel <code>artiest</code> en daarna op de tabel <code>genre</code>.</p></li>
+    <li><p>Bekijk het resultaat: <code>artiest</code> heeft een nieuwe kolom <code>genreID</code> met een rood ruitje <span class="ico ico-fk"></span>. Tussen de tabellen loopt een stippellijn met de kraaienpoot bij <code>artiest</code>.</p></li>
+    <li><p>Dubbelklik op de lijn en kies het tabblad <span class="ui">Foreign Key</span>. Vink bij <span class="ui">Referencing Table</span> het vakje <span class="ui">Mandatory</span> uit: een genre mag zonder artiesten bestaan. Laat <span class="ui">Mandatory</span> bij <span class="ui">Referenced Table</span> aan: elke artiest hoort bij precies één genre.</p></li>
+    <li><p>Controleer: bij <code>artiest</code> staat nu een cirkeltje met kraaienpoot, bij <code>genre</code> twee streepjes. Dat is precies het ERD.</p></li>
+  </ol>
+  <aside class="note tip">
+    <p class="note-title">Waarom een stippellijn?</p>
+    <p>Dit is een <i>non-identifying</i> relatie: de RS <code>genreID</code> maakt geen deel uit van de PS van <code>artiest</code>. Een artiest heeft zijn eigen <code>artiestID</code>. Bij een <i>identifying</i> relatie (volle lijn) is de RS wél een deel van de PS. Die zien we bij <code>favoriet</code>.</p>
+  </aside>
+
+  <h2>B. bezoeker kampeert in campingzone (1:n, optioneel)</h2>
+  <p>In het ERD: een bezoeker kampeert in nul of één campingzone, in een zone kamperen nul of meer bezoekers. Aan beide kanten staat dus een cirkeltje.</p>
+  <ol class="steps">
+    <li><p>Kies <span class="ui">Place a New 1:n Non-Identifying Relationship</span>. Klik op <code>bezoeker</code>, daarna op <code>campingzone</code>.</p></li>
+    <li><p>Dubbelklik op de nieuwe relatielijn en kies het tabblad <span class="ui">Foreign Key</span>.</p></li>
+    <li><p>Vink bij <span class="ui">Referenced Table</span> (<code>campingzone</code>) het vakje <span class="ui">Mandatory</span> uit: niet elke bezoeker kampeert.</p></li>
+    <li><p>Vink ook bij <span class="ui">Referencing Table</span> (<code>bezoeker</code>) het vakje <span class="ui">Mandatory</span> uit: een zone mag leeg zijn.</p></li>
+    <li><p>Controleer: in de tabeleditor van <code>bezoeker</code> staat <span class="nn">NN</span> bij <code>campingzoneID</code> nu uit, en in het diagram is het ruitje van die kolom niet meer gevuld <span class="ico ico-fknull"></span>. Op de lijn staat aan beide kanten een cirkeltje.</p></li>
+  </ol>
+
+  <h2>C. bezoeker volgt artiest (m:n zonder attributen)</h2>
+  <p>In het ERD: een bezoeker volgt nul of meer artiesten, een artiest wordt door nul of meer bezoekers gevolgd. Voor een m:n-relatie heeft Workbench een handige tool: die maakt de koppeltabel helemaal zelf.</p>
   <ol class="steps">
     <li><p>Klik op <span class="ui">Place a New n:m Identifying Relationship</span> (toets <kbd>5</kbd>).</p></li>
     <li><p>Klik op <code>bezoeker</code> en daarna op <code>artiest</code>.</p></li>
-    <li><p>Workbench maakt een nieuwe tabel <code>bezoeker_has_artiest</code> met de kolommen <code>bezoekerID</code> en <code>artiestID</code>. Ze vormen samen de PS en zijn elk ook een RS. In de tabeleditor staat bij beide kolommen het vinkje PK. De lijnen zijn vol: dit zijn <i>identifying</i> relaties.</p></li>
+    <li><p>Workbench maakt een nieuwe tabel <code>bezoeker_has_artiest</code> met de kolommen <code>bezoekerID</code> en <code>artiestID</code>. Ze vormen samen de PS en zijn elk ook een RS. In de tabeleditor staat bij beide kolommen het vinkje PK. De twee lijnen zijn vol: dit zijn <i>identifying</i> relaties.</p></li>
     <li><p>Dubbelklik op de nieuwe tabel en hernoem ze naar <code>favoriet</code>.</p></li>
+    <li><p>Er zijn nu twee relaties, elk met <code>favoriet</code> als <span class="ui">Referencing Table</span>. Vink bij <b>beide</b> lijnen het vakje <span class="ui">Mandatory</span> van de <span class="ui">Referencing Table</span> uit: een bezoeker mag zonder favorieten zijn, en een artiest mag door niemand gevolgd worden.</p></li>
   </ol>
   <aside class="note warn">
     <p class="note-title">Let op</p>
-    <p>De n:m-tool werkt enkel als beide tabellen al een primaire sleutel hebben. Kijk dat na als er niets gebeurt.</p>
+    <p>De n:m-tool werkt enkel als beide tabellen al een primaire sleutel hebben. Kijk dat na als er niets gebeurt. Workbench toont bij koppeltabellen ook niet altijd een sleutelicoon in het diagram; de vinkjes PK in de tabeleditor zijn bepalend.</p>
   </aside>
 
-  <h2>E. Het diagram controleren</h2>
-  <p>Vergelijk je diagram met de figuur. De namen van de beperkingen (zoals <code>fk_bezoeker_has_artiest_artiest1</code>) mogen bij jou anders zijn. Belangrijk zijn de kolommen, de iconen en de lijnen.</p>
+  <h2>D. artiest treedt op op podium (m:n met attributen)</h2>
+  <p>In het ERD: een artiest treedt op op nul of meer podia, op een podium treden nul of meer artiesten op. Bij elk optreden horen de attributen datum, beginuur en einduur. We gebruiken opnieuw de n:m-tool, en voegen <b>pas daarna</b> de attributen toe.</p>
+  <ol class="steps">
+    <li><p>Klik op <span class="ui">Place a New n:m Identifying Relationship</span>. Klik op <code>artiest</code> en daarna op <code>podium</code>. Workbench maakt de koppeltabel <code>artiest_has_podium</code> met <code>artiestID</code> en <code>podiumID</code>.</p></li>
+    <li><p>Dubbelklik op de nieuwe tabel en hernoem ze naar <code>optreden</code>.</p></li>
+    <li><p><b>Kies de primaire sleutel.</b> Workbench maakte van <code>(artiestID, podiumID)</code> de PS. Maar die combinatie is niet uniek: Neon Atlas speelt op vrijdag én zondag op het Hoofdpodium. Klik in de eerste lege rij van de kolommenlijst. Workbench stelt <code>optredencol</code> met <code>VARCHAR(45)</code> voor: overschrijf de naam met <code>optredenID</code>, kies datatype <code>INT</code> en vink PK, NN en AI aan.</p></li>
+    <li><p>Vink bij <code>artiestID</code> en <code>podiumID</code> het vakje PK uit. Laat <span class="nn">NN</span> aan: elk optreden hoort bij een artiest en een podium.</p></li>
+    <li><p><b>Voeg de attributen van de relatie toe:</b> <code>datum</code> (<code>DATE</code>), <code>beginuur</code> (<code>TIME</code>) en <code>einduur</code> (<code>TIME</code>), telkens met <span class="nn">NN</span>.</p></li>
+    <li><p>De RS'en zijn nu geen deel meer van de PS: de relaties zijn <i>non-identifying</i> en de lijnen worden stippellijnen. Blijft een lijn vol? Dubbelklik erop en vink in het tabblad <span class="ui">Foreign Key</span> het vakje <span class="ui">Identifying Relationship</span> uit.</p></li>
+    <li><p>Vink bij beide lijnen het vakje <span class="ui">Mandatory</span> van de <span class="ui">Referencing Table</span> (<code>optreden</code>) uit: een artiest mag zonder optredens zijn (Kid Kompas is geannuleerd), en een podium ook.</p></li>
+  </ol>
+
+  <div class="wb" role="img" aria-label="Vereenvoudigde weergave van de tabeleditor met de tabel optreden">
+    <div class="wb-title"><span>Table: optreden</span><span class="tag">vereenvoudigde weergave</span></div>
+    <div class="wb-body">
+      <table class="wb-grid">
+        <thead><tr><th>Column Name</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>B</th><th>UN</th><th>ZF</th><th>AI</th><th>G</th><th>Default/Expression</th></tr></thead>
+        <tbody>
+          <tr><td class="name"><span class="ico ico-fk"></span> artiestID</td><td>INT</td><td><span class="cb hl"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr><td class="name"><span class="ico ico-fk"></span> podiumID</td><td>INT</td><td><span class="cb hl"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr><td class="name"><span class="ico ico-pk"></span> optredenID</td><td>INT</td><td><span class="cb on hl"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb on hl"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr><td class="name"><span class="ico ico-nn"></span> datum</td><td>DATE</td><td><span class="cb"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr><td class="name"><span class="ico ico-nn"></span> beginuur</td><td>TIME</td><td><span class="cb"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td></td></tr>
+          <tr><td class="name"><span class="ico ico-nn"></span> einduur</td><td>TIME</td><td><span class="cb"></span></td><td><span class="cb on"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td><span class="cb"></span></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="small muted">De gemarkeerde vakjes veranderen we zelf: PK uit bij de twee RS'en, PK en AI aan bij <code>optredenID</code>.</p>
+
+  <aside class="note info">
+    <p class="note-title">Koppeltabel met of zonder eigen sleutel?</p>
+    <p>Bij <code>favoriet</code> is de combinatie <code>(bezoekerID, artiestID)</code> altijd uniek: een bezoeker duidt een artiest maar één keer aan. Daar houden we de PS die Workbench maakte. Bij <code>optreden</code> kan dezelfde combinatie meermaals voorkomen, dus krijgt de tabel een eigen surrogaatsleutel. Een alternatief was <code>datum</code> mee in de PS opnemen; dat werkt zolang een artiest hoogstens één keer per dag op hetzelfde podium speelt.</p>
+  </aside>
+
+  <h2>E. Het model vergelijken met het ERD</h2>
+  <p>Loop elke relatie na. De symbolen in Workbench moeten dezelfde zijn als in het ERD van stap 2.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Relatie (kind → ouder)</th><th>Mandatory bij Referencing Table</th><th>Mandatory bij Referenced Table</th><th>Lijn</th></tr></thead>
+    <tbody>
+      <tr><td><code>artiest</code> → <code>genre</code></td><td>uit</td><td>aan</td><td>stippellijn</td></tr>
+      <tr><td><code>bezoeker</code> → <code>campingzone</code></td><td>uit</td><td>uit</td><td>stippellijn</td></tr>
+      <tr><td><code>favoriet</code> → <code>bezoeker</code></td><td>uit</td><td>aan</td><td>volle lijn</td></tr>
+      <tr><td><code>favoriet</code> → <code>artiest</code></td><td>uit</td><td>aan</td><td>volle lijn</td></tr>
+      <tr><td><code>optreden</code> → <code>artiest</code></td><td>uit</td><td>aan</td><td>stippellijn</td></tr>
+      <tr><td><code>optreden</code> → <code>podium</code></td><td>uit</td><td>aan</td><td>stippellijn</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>De namen van de beperkingen (zoals <code>fk_artiest_has_podium_podium1</code>) mogen bij jou anders zijn; Workbench past ze niet aan als we een tabel hernoemen. Belangrijk zijn de kolommen, de iconen en de symbolen op de lijnen.</p>
 </div>
 <div class="bleed">
   <figure>
-    <div class="diagram" style="max-width:1100px"><img src="img/eer-festival.svg" width="1080" height="560" style="min-width:900px" alt="Schematische weergave van het volledige EER-diagram van de databank festival."></div>
-    <figcaption>Het volledige model, vereenvoudigd weergegeven.</figcaption>
+    <div class="diagram" style="max-width:1100px"><img src="img/eer-festival.svg" width="1080" height="560" style="min-width:900px" alt="Schematische weergave van het volledige EER-diagram van de databank festival, met dezelfde cardinaliteit en optionaliteit als het ERD."></div>
+    <figcaption>Het volledige model, vereenvoudigd weergegeven. Vergelijk de symbolen op de lijnen met het ERD van stap 2.</figcaption>
   </figure>
 </div>
 <div class="content">
@@ -138,6 +195,8 @@
       <tr><td>De RS heet <code>genre_genreID</code></td><td>De instelling uit stap 3 ontbreekt</td><td>Hernoem de kolom in de tabeleditor naar <code>genreID</code>.</td></tr>
       <tr><td>De RS heet <code>genreID1</code></td><td>We hadden zelf al een kolom <code>genreID</code> getypt</td><td>Verwijder de overbodige kolom en hou de kolom met het rode ruitje.</td></tr>
       <tr><td>Er verschijnt een extra tabel <code>…_has_…</code> waar we die niet wilden</td><td>De n:m-tool in plaats van de 1:n-tool gekozen</td><td>Verwijder de extra tabel (rechtermuisklik op de tabel) en leg de relatie opnieuw.</td></tr>
+      <tr><td>Op de lijn staat een streepje waar het ERD een cirkeltje heeft</td><td><span class="ui">Mandatory</span> staat nog aan</td><td>Vink het juiste vakje uit (zie de tabel bij E). Verandert het symbool niet meteen, zie het kader bovenaan deze stap.</td></tr>
+      <tr><td>De lijnen naar <code>optreden</code> blijven vol</td><td><code>artiestID</code> of <code>podiumID</code> is nog deel van de PS</td><td>Vink PK uit bij die kolommen, of vink in de relatie-editor <span class="ui">Identifying Relationship</span> uit.</td></tr>
     </tbody>
   </table>
   </div>
@@ -145,10 +204,11 @@
   <aside class="note check">
     <p class="note-title">Controle</p>
     <ul class="checklist" data-key="stap5">
-      <li><label><input type="checkbox"><span><code>artiest</code> heeft een RS <code>genreID</code>.</span></label></li>
-      <li><label><input type="checkbox"><span><code>optreden</code> heeft de RS'en <code>artiestID</code> en <code>podiumID</code>.</span></label></li>
-      <li><label><input type="checkbox"><span><code>bezoeker</code> heeft een RS <code>campingzoneID</code> die leeg mag blijven (NN uit).</span></label></li>
-      <li><label><input type="checkbox"><span>Er is een tabel <code>favoriet</code> met de samengestelde PS <code>(bezoekerID, artiestID)</code>.</span></label></li>
+      <li><label><input type="checkbox"><span><code>artiest</code> heeft een RS <code>genreID</code>; bij <code>artiest</code> staat een cirkeltje met kraaienpoot.</span></label></li>
+      <li><label><input type="checkbox"><span><code>bezoeker</code> heeft een RS <code>campingzoneID</code> die leeg mag blijven (NN uit), met aan beide kanten een cirkeltje.</span></label></li>
+      <li><label><input type="checkbox"><span>De koppeltabel <code>favoriet</code> heeft de samengestelde PS <code>(bezoekerID, artiestID)</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>De koppeltabel <code>optreden</code> heeft een eigen PS <code>optredenID</code> en de attributen <code>datum</code>, <code>beginuur</code> en <code>einduur</code>.</span></label></li>
+      <li><label><input type="checkbox"><span>Elke relatie in mijn model heeft dezelfde symbolen als in het ERD.</span></label></li>
       <li><label><input type="checkbox"><span>Mijn model telt zeven tabellen en is bewaard.</span></label></li>
     </ul>
   </aside>

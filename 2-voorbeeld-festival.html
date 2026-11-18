@@ -53,7 +53,7 @@
 <div class="bleed">
   <figure>
     <div class="diagram" style="max-width:840px"><img src="img/erd-festival.svg" width="820" height="450" alt="ERD van festival Zomerklanken met de entiteiten Genre, Artiest, Podium, Campingzone en Bezoeker en de relaties behoort tot, treedt op op, kampeert in en volgt."></div>
-    <figcaption>Het ERD in de notatie van de cursus. Het vette attribuut identificeert de entiteit. Onder de relatie <i>treedt op op</i> staan de attributen van die relatie.</figcaption>
+    <figcaption>Het ERD van festival Zomerklanken. Het vette attribuut identificeert de entiteit. Onder de relatie <i>treedt op op</i> staan de attributen van die relatie.</figcaption>
   </figure>
 </div>
 <div class="content">
@@ -72,23 +72,23 @@
     <li><p><b>behoort tot</b> is een 1:n-relatie zonder attributen. De PS van de één-kant gaat als RS naar de veel-kant: <code>artiest</code> krijgt <code>genreID</code>.</p></li>
     <li><p><b>kampeert in</b> is ook 1:n zonder attributen: <code>bezoeker</code> krijgt <code>campingzoneID</code>. Door het cirkeltje bij Campingzone mag die RS <b>leeg</b> blijven: niet elke bezoeker kampeert.</p></li>
     <li><p><b>volgt</b> is een m:n-relatie zonder attributen. We maken een extra tabel <code>favoriet(bezoekerID, artiestID)</code>. De twee kolommen vormen samen de PS: een bezoeker kan dezelfde artiest maar één keer als favoriet aanduiden.</p></li>
-    <li><p><b>treedt op op</b> is een m:n-relatie mét attributen. We maken een extra tabel <code>optreden</code> met <code>artiestID</code>, <code>podiumID</code>, <code>datum</code>, <code>beginuur</code> en <code>einduur</code>.</p>
-      <p>Welke PS? De combinatie <code>(artiestID, podiumID)</code> is niet uniek: Neon Atlas speelt op vrijdag én zondag op het Hoofdpodium. Daarom krijgt <code>optreden</code> een eigen surrogaatsleutel <code>optredenID</code>.</p></li>
+    <li><p><b>treedt op op</b> is een m:n-relatie mét attributen. We krijgen een extra tabel <code>optreden</code> met <code>artiestID</code>, <code>podiumID</code> en de attributen van de relatie: <code>datum</code>, <code>beginuur</code> en <code>einduur</code>.</p>
+      <p>Welke PS? De combinatie <code>(artiestID, podiumID)</code> is niet uniek: Neon Atlas speelt op vrijdag én zondag op het Hoofdpodium. Daarom krijgt <code>optreden</code> een eigen surrogaatsleutel <code>optredenID</code>. De kolommen <code>artiestID</code> en <code>podiumID</code> blijven gewone refererende sleutels.</p></li>
   </ol>
 
-  <p>In de notatie van de cursus: de <span class="pk">PS</span> en de <span class="fk">RS</span> zijn aangeduid.</p>
+  <p>Als relationeel schema, met de <span class="pk">PS</span> en de <span class="fk">RS</span> aangeduid:</p>
   <ul class="schema">
     <li>genre(<span class="pk">genreID</span>, naam)</li>
     <li>artiest(<span class="pk">artiestID</span>, naam, land, <span class="fk">genreID</span>)</li>
     <li>podium(<span class="pk">podiumID</span>, naam, capaciteit, overdekt)</li>
-    <li>optreden(<span class="pk">optredenID</span>, datum, beginuur, einduur, <span class="fk">artiestID</span>, <span class="fk">podiumID</span>)</li>
-    <li>campingzone(<span class="pk">campingzoneID</span>, naam, maxTenten)</li>
+        <li>campingzone(<span class="pk">campingzoneID</span>, naam, maxTenten)</li>
     <li>bezoeker(<span class="pk">bezoekerID</span>, voornaam, familienaam, email, geboortedatum, <span class="fk">campingzoneID</span>)</li>
     <li>favoriet(<span class="pk"><span class="fk">bezoekerID</span></span>, <span class="pk"><span class="fk">artiestID</span></span>)</li>
+    <li>optreden(<span class="fk">artiestID</span>, <span class="fk">podiumID</span>, <span class="pk">optredenID</span>, datum, beginuur, einduur)</li>
   </ul>
 
   <h2>Het volledige ontwerp</h2>
-  <p>Per tabel noteren we nu datatypes en eigenschappen. Dit is precies wat we in stap 4 en 5 in Workbench ingeven. Een <span class="yes">✓</span> betekent: vinkje aan.</p>
+  <p>Per tabel noteren we nu datatypes en eigenschappen. Dit is precies wat we in stap 4 (gewone tabellen) en stap 5 (relaties en koppeltabellen) in Workbench ingeven. Een <span class="yes">✓</span> betekent: vinkje aan.</p>
 
   <div class="table-wrap"><table class="design">
     <caption>Tabel <code>genre</code></caption>
@@ -122,19 +122,6 @@
   </table></div>
 
   <div class="table-wrap"><table class="design">
-    <caption>Tabel <code>optreden</code></caption>
-    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
-    <tbody>
-      <tr><td><code>optredenID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td>surrogaatsleutel</td></tr>
-      <tr><td><code>datum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
-      <tr><td><code>beginuur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
-      <tr><td><code>einduur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td><td></td></tr>
-      <tr><td><code>artiestID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar artiest, stap 5</td></tr>
-      <tr><td><code>podiumID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar podium, stap 5</td></tr>
-    </tbody>
-  </table></div>
-
-  <div class="table-wrap"><table class="design">
     <caption>Tabel <code>campingzone</code></caption>
     <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
     <tbody>
@@ -157,18 +144,34 @@
     </tbody>
   </table></div>
 
+  <h3>De koppeltabellen</h3>
+  <p>De tabellen <code>favoriet</code> en <code>optreden</code> komen voort uit een m:n-relatie. Die maken we niet zelf aan: Workbench zet ze tussen de twee tabellen wanneer we in stap 5 de relatie leggen. Pas daarna voegen we de attributen van de relatie toe.</p>
+
   <div class="table-wrap"><table class="design">
-    <caption>Tabel <code>favoriet</code> (maakt Workbench zelf in stap 5)</caption>
+    <caption>Tabel <code>favoriet</code> (m:n zonder attributen)</caption>
     <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
     <tbody>
-      <tr><td><code>bezoekerID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td><td>PS én RS naar bezoeker</td></tr>
-      <tr><td><code>artiestID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td><td>PS én RS naar artiest</td></tr>
+      <tr><td><code>bezoekerID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td><td>PS én RS naar bezoeker, maakt Workbench</td></tr>
+      <tr><td><code>artiestID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td></td><td>PS én RS naar artiest, maakt Workbench</td></tr>
     </tbody>
   </table></div>
 
-  <aside class="note course">
-    <p class="note-title">Uit de cursus: procesgegevens</p>
-    <p>We bewaren de geboortedatum en niet de leeftijd. De leeftijd kunnen we altijd berekenen, en zo hoeven we ze niet elk jaar aan te passen (cursus 2.7.3).</p>
+  <div class="table-wrap"><table class="design">
+    <caption>Tabel <code>optreden</code> (m:n met attributen)</caption>
+    <thead><tr><th>Kolom</th><th>Datatype</th><th>PK</th><th>NN</th><th>UQ</th><th>AI</th><th>Opmerking</th></tr></thead>
+    <tbody>
+      <tr><td><code>artiestID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar artiest, maakt Workbench</td></tr>
+      <tr><td><code>podiumID</code></td><td>INT</td><td></td><td class="yes">✓</td><td></td><td></td><td><span class="fk">RS</span> naar podium, maakt Workbench</td></tr>
+      <tr><td><code>optredenID</code></td><td>INT</td><td class="yes">✓</td><td class="yes">✓</td><td></td><td class="yes">✓</td><td>surrogaatsleutel, voegen we zelf toe</td></tr>
+      <tr><td><code>datum</code></td><td>DATE</td><td></td><td class="yes">✓</td><td></td><td></td><td>attribuut van de relatie</td></tr>
+      <tr><td><code>beginuur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td><td>attribuut van de relatie</td></tr>
+      <tr><td><code>einduur</code></td><td>TIME</td><td></td><td class="yes">✓</td><td></td><td></td><td>attribuut van de relatie</td></tr>
+    </tbody>
+  </table></div>
+
+  <aside class="note info">
+    <p class="note-title">Procesgegevens bewaren we niet</p>
+    <p>We bewaren de geboortedatum en niet de leeftijd. De leeftijd is een procesgegeven: we kunnen ze altijd berekenen, en zo hoeven we ze niet elk jaar aan te passen.</p>
   </aside>
 
   <h2>Zo ziet ons diagram er straks uit</h2>
@@ -188,7 +191,7 @@
       <li><label><input type="checkbox"><span>Ik heb de probleemstelling gelezen en kan elke relatie in het ERD in twee richtingen lezen.</span></label></li>
       <li><label><input type="checkbox"><span>Ik begrijp waarom <code>optreden</code> een eigen sleutel <code>optredenID</code> krijgt.</span></label></li>
       <li><label><input type="checkbox"><span>Ik begrijp waarom <code>campingzoneID</code> in <code>bezoeker</code> leeg mag zijn.</span></label></li>
-      <li><label><input type="checkbox"><span>Ik weet dat de tabel <code>favoriet</code> de m:n-relatie <i>volgt</i> voorstelt.</span></label></li>
+      <li><label><input type="checkbox"><span>Ik weet dat de koppeltabellen <code>favoriet</code> en <code>optreden</code> de m:n-relaties <i>volgt</i> en <i>treedt op op</i> voorstellen, en dat Workbench ze pas bij de relaties maakt.</span></label></li>
     </ul>
   </aside>
 
